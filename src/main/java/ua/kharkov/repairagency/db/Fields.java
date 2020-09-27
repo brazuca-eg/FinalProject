@@ -8,7 +8,7 @@ public final class Fields {
 	public static final String USER__PASSWORD = "password";
 	public static final String USER__LAST_NAME = "surname";
 	public static final String USER__ROLE_ID = "role_id";
-	
+
 
 
 	
