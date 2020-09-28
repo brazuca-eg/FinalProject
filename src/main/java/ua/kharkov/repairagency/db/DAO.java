@@ -10,8 +10,15 @@ import java.sql.SQLException;
 public class DAO {
     private static DAO dao;
     private static final ConnectionPool pool = ConnectionPool.getInstance();
-    private static final String SQL__LOGIN_USER =
+    private static final String SQL_LOGIN_USER =
             "SELECT * FROM user WHERE login=? AND password=?";
+    private static final String SQL_REGISTER_USER  =
+            "INSERT INTO user (login, password, surname, role_id)"
+                    + " VALUES (?, ?, ?, ?)";
+
+
+
+
     private DAO(){
 
     }
@@ -30,7 +37,7 @@ public class DAO {
         try {
             con = pool.getConnection();
             DAO.UserMapper mapper = new DAO.UserMapper();
-            pstmt = con.prepareStatement(SQL__LOGIN_USER);
+            pstmt = con.prepareStatement(SQL_LOGIN_USER);
             pstmt.setString(1, login);
             pstmt.setString(2, password);
             rs = pstmt.executeQuery();
@@ -47,7 +54,27 @@ public class DAO {
         return user;
     }
 
+    public void register(String login, String password, String surname, int role_id) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            preparedStatement = con.prepareStatement(SQL_REGISTER_USER);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, surname);
+            preparedStatement.setInt(4, role_id);
+            int row = preparedStatement.executeUpdate();
+            System.out.println(row); //1
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
 
+        }
+
+    }
 
 
     private static class UserMapper implements EntityMapper<User> {
