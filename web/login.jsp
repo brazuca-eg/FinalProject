@@ -20,5 +20,7 @@
       <input id="button" type="submit" name="Login" />
     </form>
 
+    <jsp:include page="footer.jsp" />
+
   </body>
 </html>
