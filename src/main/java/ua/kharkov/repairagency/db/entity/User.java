@@ -3,7 +3,6 @@ package ua.kharkov.repairagency.db.entity;
 public class User extends Entity{
 
 	private static final long serialVersionUID = 1L;
-	
 
 	private String login;
 	private String password;
