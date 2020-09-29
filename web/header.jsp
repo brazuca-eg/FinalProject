@@ -12,24 +12,30 @@
         String usMenu2="";
         String usMenu3="";
         String usMenu4="";
-
-        int role = (int) request.getSession().getAttribute("role");
-        if(role == 1){
+        Object d = request.getSession().getAttribute("role");
+        if(d == null){
             usMenu1 = "Главная";
-            usMenu2 = "Мой кабинет";
-            usMenu3 = "Заявки клиентов";
-            usMenu4 = "Пополнить баланс";
-        }
-        else if(role == 2){
-            usMenu1 = "Главная";
-            usMenu2 = "Мой кабинет";
-            usMenu3 = "Заявки";
-            usMenu4 = "Завершенные";
-        }
-        else if(role == 3){
-            usMenu1 = "Главная";
-            usMenu2 = "Мой кабинет";
-            usMenu3 = "Подать заявку ";
+            usMenu2 = "Войти";
+            usMenu3 = "Регистрация";
+        }else{
+            int role = (int) request.getSession().getAttribute("role");
+            if(role == 1){
+                usMenu1 = "Главная";
+                usMenu2 = "Мой кабинет";
+                usMenu3 = "Заявки клиентов";
+                usMenu4 = "Пополнить баланс";
+            }
+            else if(role == 2){
+                usMenu1 = "Главная";
+                usMenu2 = "Мой кабинет";
+                usMenu3 = "Заявки";
+                usMenu4 = "Завершенные";
+            }
+            else if(role == 3){
+                usMenu1 = "Главная";
+                usMenu2 = "Мой кабинет";
+                usMenu3 = "Подать заявку ";
+            }
         }
     %>
     <li><a href="#"><%= usMenu1 %></a></li>

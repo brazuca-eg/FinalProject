@@ -65,8 +65,7 @@ public class DAO {
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, surname);
             preparedStatement.setInt(4, role_id);
-            int row = preparedStatement.executeUpdate();
-            System.out.println(row); //1
+            preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException ex) {
             ex.printStackTrace();

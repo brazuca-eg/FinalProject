@@ -11,7 +11,7 @@
     <title>Login page</title>
   </head>
   <body>
-
+    <jsp:include page="header.jsp" />
     <form method="get" action="login" >
       <p>Логин: </p><br>
       <input id="loginField" type="text" name="login" placeholder="Enter email" />

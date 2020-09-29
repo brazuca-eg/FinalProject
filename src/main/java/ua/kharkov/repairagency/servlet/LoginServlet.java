@@ -18,6 +18,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String loginField = req.getParameter("login");
 		String passwordField = req.getParameter("password");
+
 		User user = DAO.getInstance().login(loginField, passwordField);
 		PrintWriter out = res.getWriter();
 		if(user == null){
@@ -27,6 +28,7 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = req.getSession();
 			session.setAttribute("userLogin", loginField);
 			session.setAttribute("role", user.getRole_id());
+			session.setAttribute("current_user", user);
 			//out.print("The role is : " + user.getRole_id() + "\n") ;
 			//out.print(user.toString());
 			if(user.getRole_id() == 1){
