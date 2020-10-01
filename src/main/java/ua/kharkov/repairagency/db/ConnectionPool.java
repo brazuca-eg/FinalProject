@@ -12,7 +12,7 @@ public class ConnectionPool {
     private ConnectionPool(){
 
     }
-    public static ConnectionPool getInstance(){
+    public static synchronized ConnectionPool getInstance(){
         if(connectionPool == null){
             connectionPool = new ConnectionPool();
         }
@@ -40,5 +40,29 @@ public class ConnectionPool {
         }
         return connection;
     }
+    public void commitAndClose(Connection con) {
+        try {
+            con.commit();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Rollbacks and close the given connection.
+     *
+     * @param con
+     *            Connection to be rollbacked and closed.
+     */
+    public void rollbackAndClose(Connection con) {
+        try {
+            con.rollback();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 
 }

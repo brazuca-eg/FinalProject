@@ -1,11 +1,11 @@
 package ua.kharkov.repairagency.db;
 
+import ua.kharkov.repairagency.db.entity.Balance;
 import ua.kharkov.repairagency.db.entity.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DAO {
     private static DAO dao;
@@ -16,6 +16,17 @@ public class DAO {
             "INSERT INTO user (login, password, surname, role_id)"
                     + " VALUES (?, ?, ?, ?)";
 
+    private static final String SQL_FIND_USER_BY_ID  =
+            "SELECT * FROM user WHERE user_id=?";
+
+    private static final String SQL_FIND_ALL_USERS_BY_ID  =
+            "SELECT * FROM user WHERE role_id=?";
+
+    private static final String SQL_CUSTOMER_BALANCE  =
+            "SELECT balance FROM details WHERE repair.details.user_id=?";
+
+    private static final String SQL_PAY_BALANCE  =
+    "UPDATE  details SET (user_id, balance) VALUES (?, ?);";
 
 
 
@@ -46,10 +57,10 @@ public class DAO {
             rs.close();
             pstmt.close();
         } catch (SQLException ex) {
-            // DBManager.getInstance().rollbackAndClose(con);
+            pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
         } finally {
-            //DBManager.getInstance().commitAndClose(con);
+            pool.getInstance().commitAndClose(con);
         }
         return user;
     }
@@ -68,12 +79,109 @@ public class DAO {
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
         } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
 
+    public void pay(User user, double sum) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
+            preparedStatement.setInt(1, user.getId());
+            preparedStatement.setDouble(2, sum);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
         }
 
     }
+
+
+    public User findUserId(int id) {
+        User user = null;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            pstmt = con.prepareStatement(SQL_FIND_USER_BY_ID);
+            pstmt.setInt(1, id);
+            resultSet = pstmt.executeQuery();
+            if (resultSet.next())
+                user = mapper.mapRow(resultSet);
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            //pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+           // pool.getInstance().commitAndClose(con);
+        }
+        return user;
+    }
+
+    public List<User> findClients(int role_id) {
+        User user = null;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        ArrayList<User> users = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            pstmt = con.prepareStatement(SQL_FIND_ALL_USERS_BY_ID );
+            pstmt.setInt(1, role_id);
+            resultSet = pstmt.executeQuery();
+            while (resultSet.next()){
+                user = mapper.mapRow(resultSet);
+                users.add(user);
+            }
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+           //pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+           // pool.getInstance().commitAndClose(con);
+        }
+        return users;
+    }
+
+    public Balance checkCustomerBalance(User user) {
+        int u_id = user.getId();
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        Balance balance = new Balance();
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(SQL_CUSTOMER_BALANCE);
+            pstmt.setInt(1,  u_id);
+            resultSet = pstmt.executeQuery();
+            while (resultSet.next())
+                balance.setBalance(resultSet.getDouble("balance"));
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            //pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            // pool.getInstance().commitAndClose(con);
+        }
+        return balance;
+    }
+
 
 
     private static class UserMapper implements EntityMapper<User> {
@@ -91,4 +199,47 @@ public class DAO {
             }
         }
     }
+
+
+    public static Connection getConnectionWithDriverManager() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        String url = "jdbc:mysql://localhost/repair?serverTimezone=Europe/Moscow&useSSL=false";
+        Connection connection = DriverManager.getConnection(url, "root", "1234");
+        connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        connection.setAutoCommit(false);
+        return connection;
+    }
+
+//    public static void main(String[] args) {
+//        User user = new User();
+//        user.setId(1);
+//        double sum = 120;
+//        PreparedStatement preparedStatement = null;
+//        Connection con = null;
+//        try {
+//            con = getConnectionWithDriverManager();
+//            DAO.UserMapper mapper = new DAO.UserMapper();
+//            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
+//            preparedStatement.setInt(1, user.getId());
+//            preparedStatement.setDouble(2, sum);
+//            preparedStatement.executeUpdate();
+//            preparedStatement.close();
+//        } catch (SQLException ex) {
+//            //pool.getInstance().rollbackAndClose(con);
+//            ex.printStackTrace();
+//        } finally {
+//           // pool.getInstance().commitAndClose(con);
+//        }
+//
+//    }
+
+
+
+
+
+
 }

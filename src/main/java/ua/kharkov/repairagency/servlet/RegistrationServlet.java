@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 @WebServlet("/register")
 public class RegistrationServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String loginField = req.getParameter("login");
         String passwordField = req.getParameter("password");
         String passwordField2  = req.getParameter("password2");
@@ -27,7 +27,7 @@ public class RegistrationServlet extends HttpServlet {
         }else{
             DAO.getInstance().register(loginField, passwordField , surnameField, role_id );
             PrintWriter out = res.getWriter();
-            out.println("succ");
+            res.sendRedirect("login.jsp");
             //res.sendRedirect("login.jsp");
         }
 

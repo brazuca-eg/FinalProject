@@ -8,7 +8,7 @@
 <body size="10" face="Arial" >
     <jsp:include page="header.jsp" />
     <div class="center" >
-        <form method="get" action="register" >
+        <form method="post" action="register" >
             <table border="0" align="center">
                 <tr>
                     <td>Логин:</td>
