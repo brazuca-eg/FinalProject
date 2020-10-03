@@ -1,9 +1,16 @@
 .center {
-    width: 60%;
+    width: 36%;
     padding: 20px;
     margin: auto;
     background: #4169E1;
-
+}
+table {
+    width: 500px; /* Ширина таблицы */
+    border: 1px solid green; /* Рамка вокруг таблицы */
+    margin: auto; /* Выравниваем таблицу по центру окна  */
+}
+td {
+    text-align: center; /* Выравниваем текст по центру ячейки */
 }
 
 input.green{

@@ -12,14 +12,20 @@
   </head>
   <body>
     <jsp:include page="header.jsp" />
-    <form method="get" action="login" >
-      <p>Логин: </p><br>
+    <form method="get" action="" >
+      <p>Логин: </p>
       <input id="loginField" type="text" name="login" placeholder="Enter email" />
-      <p>Пароль: </p><br>
+      <p>Пароль: </p>
       <input id="passwordField" type="text" name="password" placeholder="Enter password" /><br>
-      <input id="button" type="submit" name="Login" />
+      <input id="button" type="submit" name="Login" value="Login"/>
+    </form>
 
-<%--      <input id="but" type="submit" name="logout" />--%>
+    <p>${errors.cant_find}</p>
+    <p>${errors.validate}</p>
+
+    <h3>У вас еще нету аккаунта?</h3>
+    <form method="post" action="" >
+      <input  type="submit" name="Регистрация" value="Регистрация" />
     </form>
 
     <jsp:include page="footer.jsp" />

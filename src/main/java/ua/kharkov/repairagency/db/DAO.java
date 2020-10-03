@@ -2,7 +2,6 @@ package ua.kharkov.repairagency.db;
 
 import ua.kharkov.repairagency.db.entity.Balance;
 import ua.kharkov.repairagency.db.entity.User;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +12,8 @@ public class DAO {
     private static final String SQL_LOGIN_USER =
             "SELECT * FROM user WHERE login=? AND password=?";
     private static final String SQL_REGISTER_USER  =
-            "INSERT INTO user (login, password, surname, role_id)"
-                    + " VALUES (?, ?, ?, ?)";
+            "INSERT INTO user (email, login, password, name, surname, role_id)"
+                    + " VALUES (?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_FIND_USER_BY_ID  =
             "SELECT * FROM user WHERE user_id=?";
@@ -68,17 +67,19 @@ public class DAO {
         return user;
     }
 
-    public void register(String login, String password, String surname, int role_id) {
+    public void register(String email, String login, String password, String name, String surname, int role_id) {
         PreparedStatement preparedStatement = null;
         Connection con = null;
         try {
             con = pool.getConnection();
             DAO.UserMapper mapper = new DAO.UserMapper();
             preparedStatement = con.prepareStatement(SQL_REGISTER_USER);
-            preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, surname);
-            preparedStatement.setInt(4, role_id);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, login);
+            preparedStatement.setString(3, password);
+            preparedStatement.setString(4, name);
+            preparedStatement.setString(5, surname);
+            preparedStatement.setInt(6, role_id);
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException ex) {

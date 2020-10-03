@@ -7,25 +7,39 @@
 </head>
 <body size="10" face="Arial" >
     <jsp:include page="header.jsp" />
+    <br>
     <div class="center" >
-        <form method="post" action="register" >
-            <table border="0" align="center">
+        <form method="post" action="register"  >
+                <tr>
+                    <td>Email:</td>
+                    <th><input id="emailField" type="text" name="email" placeholder="Enter email" /></th>
+                </tr>
+                <br>
                 <tr>
                     <td>Логин:</td>
-                    <th><input id="loginField" type="text" name="login" placeholder="Enter email" /></th>
+                    <th><input id="loginField" type="text" name="login" placeholder="Enter login" /></th>
                 </tr>
+                <br>
                 <tr>
                     <td>Пароль:</td>
                     <td><input id="passwordField" type="text" name="password" placeholder="Enter password" /></td>
                 </tr>
+                <br>
                 <tr>
                     <td>Повторите пароль:</td>
                     <td><input id="secPasField" type="text" name="password2" placeholder="Enter password again" /></td>
                 </tr>
+                <br>
+                <tr>
+                    <td>Имя: </td>
+                    <td><input id="nameField" type="text" name="name" placeholder="Enter name" /></td>
+                </tr>
+                <br>
                 <tr>
                     <td>Фамилия: </td>
                     <td><input id="surnameField" type="text" name="surname" placeholder="Enter surname" /></td>
                 </tr>
+                <br>
                 <tr>
                     <td>Регистрация как: </td>
                     <td>
@@ -41,6 +55,7 @@
             <input id="button" class="green" type="submit" name="Закончить регистрацию" />
         </form>
     </div>
+    <p align="center">${errors.validate}</p>
 
     <jsp:include page="footer.jsp" />
 </body>
