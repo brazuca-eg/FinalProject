@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+
 public class ConnectionPool {
     private static ConnectionPool connectionPool;
     private ConnectionPool(){
@@ -23,12 +24,8 @@ public class ConnectionPool {
         Connection connection = null;
         try{
             context = new InitialContext();
-            System.out.println("before dataSource ");
             DataSource dataSource = (DataSource)context.lookup("java:comp/env/jdbc/pool");
-            System.out.println("after dataSource ");
-            System.out.println("before dataSource  connection = dataSource.getConnection()");
             connection = dataSource.getConnection();
-            System.out.println("after dataSource  connection = dataSource.getConnection()");
         } catch (NamingException  e) {
             //e.printStackTrace();
             System.out.println("NamingException in pool ");
@@ -49,12 +46,7 @@ public class ConnectionPool {
         }
     }
 
-    /**
-     * Rollbacks and close the given connection.
-     *
-     * @param con
-     *            Connection to be rollbacked and closed.
-     */
+
     public void rollbackAndClose(Connection con) {
         try {
             con.rollback();

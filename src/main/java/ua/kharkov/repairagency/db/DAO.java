@@ -26,7 +26,10 @@ public class DAO {
             "SELECT balance FROM details WHERE repair.details.user_id=?";
 
     private static final String SQL_PAY_BALANCE  =
-    "UPDATE  details SET (user_id, balance) VALUES (?, ?);";
+    "INSERT  details  (user_id, balance) VALUES (?, ?);";
+
+    private static final String SQL_UPDATE_BALANCE  =
+            "UPDATE details SET balance=balance+? WHERE repair.details.user_id=?";
 
 
 
@@ -91,7 +94,6 @@ public class DAO {
         Connection con = null;
         try {
             con = pool.getConnection();
-            DAO.UserMapper mapper = new DAO.UserMapper();
             preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
             preparedStatement.setInt(1, user.getId());
             preparedStatement.setDouble(2, sum);
@@ -103,8 +105,29 @@ public class DAO {
         } finally {
             pool.getInstance().commitAndClose(con);
         }
-
     }
+
+    public boolean updateBalance(User user, int sum) {
+        Connection con = null;
+        PreparedStatement preparedStatement = null;
+        boolean b = false;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
+            preparedStatement.setInt(1,sum);
+            preparedStatement.setInt(2,  user.getId());
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            b = true;
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return b;
+    }
+
 
 
     public User findUserId(int id) {
@@ -136,7 +159,7 @@ public class DAO {
         PreparedStatement pstmt = null;
         ResultSet resultSet = null;
         Connection con = null;
-        ArrayList<User> users = null;
+        List<User> users = new ArrayList<>();
         try {
             con = pool.getConnection();
             DAO.UserMapper mapper = new DAO.UserMapper();
@@ -150,10 +173,10 @@ public class DAO {
             resultSet.close();
             pstmt.close();
         } catch (SQLException ex) {
-           //pool.getInstance().rollbackAndClose(con);
+           pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
         } finally {
-           // pool.getInstance().commitAndClose(con);
+           pool.getInstance().commitAndClose(con);
         }
         return users;
     }
@@ -215,24 +238,22 @@ public class DAO {
     }
 
 //    public static void main(String[] args) {
-//        User user = new User();
-//        user.setId(1);
-//        double sum = 120;
-//        PreparedStatement preparedStatement = null;
 //        Connection con = null;
+//        PreparedStatement preparedStatement = null;
+//        boolean b = false;
 //        try {
-//            con = getConnectionWithDriverManager();
-//            DAO.UserMapper mapper = new DAO.UserMapper();
-//            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
-//            preparedStatement.setInt(1, user.getId());
-//            preparedStatement.setDouble(2, sum);
+//            con = DAO.getConnectionWithDriverManager();
+//            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
+//            preparedStatement.setInt(1, 100);
+//            preparedStatement.setInt(2, 1);
 //            preparedStatement.executeUpdate();
 //            preparedStatement.close();
+//            b = true;
 //        } catch (SQLException ex) {
-//            //pool.getInstance().rollbackAndClose(con);
+//            pool.getInstance().rollbackAndClose(con);
 //            ex.printStackTrace();
 //        } finally {
-//           // pool.getInstance().commitAndClose(con);
+//            pool.getInstance().commitAndClose(con);
 //        }
 //
 //    }

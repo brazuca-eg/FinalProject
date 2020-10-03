@@ -18,6 +18,8 @@
       <p>Пароль: </p><br>
       <input id="passwordField" type="text" name="password" placeholder="Enter password" /><br>
       <input id="button" type="submit" name="Login" />
+
+<%--      <input id="but" type="submit" name="logout" />--%>
     </form>
 
     <jsp:include page="footer.jsp" />
