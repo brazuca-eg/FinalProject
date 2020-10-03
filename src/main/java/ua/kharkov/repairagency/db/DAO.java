@@ -216,6 +216,8 @@ public class DAO {
                 user.setPassword(rs.getString(Fields.USER_PASSWORD));
                 user.setSurname(rs.getString(Fields.USER_SURNAME));
                 user.setRole_id(rs.getInt(Fields.USER_ROLE_ID));
+                user.setEmail(rs.getString(Fields.USER_EMAIL));
+                user.setName(rs.getString(Fields.USER_NAME));
                 return user;
             } catch (SQLException e) {
                 throw new IllegalStateException(e);
@@ -237,26 +239,26 @@ public class DAO {
         return connection;
     }
 
-//    public static void main(String[] args) {
-//        Connection con = null;
-//        PreparedStatement preparedStatement = null;
-//        boolean b = false;
-//        try {
-//            con = DAO.getConnectionWithDriverManager();
-//            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
-//            preparedStatement.setInt(1, 100);
-//            preparedStatement.setInt(2, 1);
-//            preparedStatement.executeUpdate();
-//            preparedStatement.close();
-//            b = true;
-//        } catch (SQLException ex) {
-//            pool.getInstance().rollbackAndClose(con);
-//            ex.printStackTrace();
-//        } finally {
-//            pool.getInstance().commitAndClose(con);
-//        }
-//
-//    }
+    public static void main(String[] args) {
+        Connection con = null;
+        PreparedStatement preparedStatement = null;
+        boolean b = false;
+        try {
+            con = DAO.getConnectionWithDriverManager();
+            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
+            preparedStatement.setInt(1, 100);
+            preparedStatement.setInt(2, 7);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            b = true;
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+
+    }
 
 
 

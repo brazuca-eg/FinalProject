@@ -27,6 +27,8 @@
             <div align="center">
                 <h3>Найденный пользователь</h3>
                 <p>Логин: ${found.login}</p>
+                <p>Почта: ${element.email}</p>
+                <p>Имя: ${found.name}</p>
                 <p>Фамилия: ${found.surname}</p>
                 <p>Текущий баланс: ${balance.balance}</p>
                 <% if(request.getAttribute("balance")!=null ){ %>
@@ -49,12 +51,16 @@
             <tr >
                 <td>Уникальный идентификатор</td>
                 <td>Логин пользователя</td>
+                <td>Email</td>
+                <td>Имя пользователя</td>
                 <td>Фамилия пользователя</td>
             </tr>
             <c:forEach items="${customers}" var="element">
                 <tr>
                     <td>${element.id}</td>
                     <td>${element.login}</td>
+                    <td>${element.email}</td>
+                    <td>${element.name}</td>
                     <td>${element.surname}</td>
                 </tr>
             </c:forEach>

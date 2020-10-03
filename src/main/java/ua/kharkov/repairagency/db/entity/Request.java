@@ -8,8 +8,26 @@ public class Request extends Entity {
     private int status_id;
     private int user_id;
     private int master_id;
+    private String name;
+    private String description;
     public Request() {
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getPrice() {
@@ -60,6 +78,8 @@ public class Request extends Entity {
                 ", status_id=" + status_id +
                 ", user_id=" + user_id +
                 ", master_id=" + master_id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

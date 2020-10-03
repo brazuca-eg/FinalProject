@@ -10,9 +10,29 @@ public class User extends Entity{
 	private String password;
 	private String surname;
 	private int role_id;
+	private String name;
+	private String email;
 	public User() {
 		
 	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getLogin() {
 		return login;
 	}
@@ -37,10 +57,17 @@ public class User extends Entity{
 	public void setRole_id(int role_id) {
 		this.role_id = role_id;
 	}
+
 	@Override
 	public String toString() {
-		return "User [login=" + login + ", password=" + password + ", surname=" + surname + ", role_id=" + role_id
-				+ "]";
+		return "User{" +
+				"login='" + login + '\'' +
+				", password='" + password + '\'' +
+				", surname='" + surname + '\'' +
+				", role_id=" + role_id +
+				", name='" + name + '\'' +
+				", email='" + email + '\'' +
+				'}';
 	}
 
 	@Override

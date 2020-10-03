@@ -3,9 +3,7 @@ package ua.kharkov.repairagency.servlet;
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.Balance;
 import ua.kharkov.repairagency.db.entity.User;
-
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

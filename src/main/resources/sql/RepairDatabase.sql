@@ -1,3 +1,4 @@
+
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -6,6 +7,9 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema repair
 -- -----------------------------------------------------
 
+-- -----------------------------------------------------
+-- Schema repair
+-- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `repair` DEFAULT CHARACTER SET utf8 ;
 USE `repair` ;
 
@@ -28,6 +32,8 @@ CREATE TABLE IF NOT EXISTS `repair`.`User` (
   `password` VARCHAR(45) NULL,
   `surname` VARCHAR(45) NULL,
   `role_id` INT NOT NULL,
+  `email` VARCHAR(25) NOT NULL,
+  `name` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`user_id`),
   INDEX `role_id_idx` (`role_id` ASC) VISIBLE,
   CONSTRAINT `role_id`
@@ -74,6 +80,8 @@ CREATE TABLE IF NOT EXISTS `repair`.`Request` (
   `status_id` INT NOT NULL,
   `user_id` INT NOT NULL,
   `master_id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `description` VARCHAR(300) NOT NULL,
   PRIMARY KEY (`request_id`, `status_id`, `user_id`, `master_id`),
   INDEX `status_id` (`status_id` ASC) VISIBLE,
   INDEX `fk_Request_User1_idx` (`user_id` ASC) VISIBLE,
