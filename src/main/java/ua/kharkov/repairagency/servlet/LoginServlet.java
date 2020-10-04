@@ -10,25 +10,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-	private User user = new User();
+	private User user = null;
 	Map<String, String> errors = new HashMap<String, String>();
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String loginField = req.getParameter("login");
 		String passwordField = req.getParameter("password");
 		if (loginField != "" && passwordField != "") {
-			User u = DAO.getInstance().login(loginField, passwordField);
+			user = DAO.getInstance().login(loginField, passwordField);
 			if (user != null) {
 				HttpSession session = req.getSession();
 				session.setAttribute("role", user.getRole_id());
 				session.setAttribute("current_user", user);
+				RequestDispatcher dispatcher = getServletContext()
+						.getRequestDispatcher("/clientWelcome");
+				dispatcher.forward(req, res);
+				//res.sendRedirect("/clientWelcome");
 			} else if(user==null){
 				errors.put("cant_find", "Нету такого пользователя");
 				req.setAttribute("errors", errors);

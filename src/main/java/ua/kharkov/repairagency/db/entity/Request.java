@@ -1,10 +1,11 @@
 package ua.kharkov.repairagency.db.entity;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class Request extends Entity {
     private double price;
-    private LocalDate date;
+    private Date date;
     private int status_id;
     private int user_id;
     private int master_id;
@@ -38,11 +39,11 @@ public class Request extends Entity {
         this.price = price;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

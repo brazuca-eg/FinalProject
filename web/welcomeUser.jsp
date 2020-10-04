@@ -7,22 +7,22 @@
 </head>
 <body>
 
-    <%
-        User user = null;
-        if(session.getAttribute("userLogin") == null){
-            response.sendRedirect("login.jsp");
-        }else{
-            user = (User) request.getSession().getAttribute("current_user");
-        }
-    %>
+
     <jsp:include page="header.jsp" />
-    <b>Hello customer, ${userLogin}</b><br>
+    <h3>Мой профиль</h3>
+    <p>Логин: ${found.login}</p>
+    <p>Почта: ${found.email}</p>
+    <p>Имя: ${found.name}</p>
+    <p>Фамилия: ${found.surname}</p>
+    <p>Текущий баланс: ${balance.balance}</p>
+    <br>
+    <a href="http://localhost:8080/Epam_Project_war_exploded/myRequests" >Мои заказы</a>
+    <a href="http://localhost:8080/Epam_Project_war_exploded/request"  >Сделать заказ</a>
 
-    <p>Фамилия <%= user.getSurname() %></p>
-
-    <form action="logout">
+    <form  method="post">
         <input type="submit" value="Logout">
     </form>
+
 
     <jsp:include page="footer.jsp" />
 

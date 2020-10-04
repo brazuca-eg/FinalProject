@@ -1,6 +1,8 @@
 package ua.kharkov.repairagency.db;
 
+import com.sun.org.apache.regexp.internal.RE;
 import ua.kharkov.repairagency.db.entity.Balance;
+import ua.kharkov.repairagency.db.entity.Request;
 import ua.kharkov.repairagency.db.entity.User;
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,6 +32,11 @@ public class DAO {
     private static final String SQL_UPDATE_BALANCE  =
             "UPDATE details SET balance=balance+? WHERE repair.details.user_id=?";
 
+    private static final String SQL_CREATE_USER_REQUEST  =
+            "INSERT INTO request (user_id, master_id, name, description, date, status_id) values (?, 4, ?, ?, ?, 1)";
+
+    private static final String SQL_USER_REQUEST_LIST  =
+            "SELECT request_id, date, status_id, user_id, master_id, name, description FROM request WHERE user_id=?";
 
 
     private DAO(){
@@ -90,6 +97,57 @@ public class DAO {
         }
     }
 
+    public void makeRequest(int user_id, String name, String description,String date) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+       // Request request = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            preparedStatement = con.prepareStatement(SQL_CREATE_USER_REQUEST);
+            preparedStatement.setInt(1, user_id);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, description);
+            preparedStatement.setString(4, date);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+    public List<Request> getUserRequests(User user) {
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        Request request = null;
+        List<Request> requests = new ArrayList<>();
+        // Request request = null;
+        try {
+            con = pool.getConnection();
+            DAO.RequestMapper mapper = new DAO.RequestMapper();
+            pstmt = con.prepareStatement( SQL_USER_REQUEST_LIST);
+            pstmt.setInt(1, user.getId());
+            resultSet = pstmt.executeQuery();
+            while (resultSet.next()){
+                Request request1 = mapper.mapRow(resultSet);
+                requests.add(request1);
+            }
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
+
+    }
+
     public void pay(User user, double sum) {
         PreparedStatement preparedStatement = null;
         Connection con = null;
@@ -147,10 +205,10 @@ public class DAO {
             resultSet.close();
             pstmt.close();
         } catch (SQLException ex) {
-            //pool.getInstance().rollbackAndClose(con);
+            pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
         } finally {
-           // pool.getInstance().commitAndClose(con);
+            pool.getInstance().commitAndClose(con);
         }
         return user;
     }
@@ -226,6 +284,25 @@ public class DAO {
         }
     }
 
+    private static class RequestMapper implements EntityMapper<Request> {
+        public Request mapRow(ResultSet rs) {
+            try {
+                Request request = new Request();
+                request.setId(rs.getInt(Fields.REQUEST_USER_ID));
+               // request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setStatus_id(rs.getInt(Fields.REQUEST_STATUS_ID));
+                request.setUser_id(rs.getInt(Fields.REQUEST_USER_ID));
+                request.setMaster_id(rs.getInt(Fields.REQUEST_MASTER_ID));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                return request;
+            } catch (SQLException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
+
 
     public static Connection getConnectionWithDriverManager() throws SQLException {
         try {
@@ -240,26 +317,26 @@ public class DAO {
         return connection;
     }
 
-    public static void main(String[] args) {
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
-        boolean b = false;
-        try {
-            con = DAO.getConnectionWithDriverManager();
-            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
-            preparedStatement.setInt(1, 100);
-            preparedStatement.setInt(2, 7);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-            b = true;
-        } catch (SQLException ex) {
-            pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
-        } finally {
-            pool.getInstance().commitAndClose(con);
-        }
-
-    }
+//    public static void main(String[] args) {
+//        Connection con = null;
+//        PreparedStatement preparedStatement = null;
+//        boolean b = false;
+//        try {
+//            con = DAO.getConnectionWithDriverManager();
+//            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
+//            preparedStatement.setInt(1, 100);
+//            preparedStatement.setInt(2, 7);
+//            preparedStatement.executeUpdate();
+//            preparedStatement.close();
+//            b = true;
+//        } catch (SQLException ex) {
+//            pool.getInstance().rollbackAndClose(con);
+//            ex.printStackTrace();
+//        } finally {
+//            pool.getInstance().commitAndClose(con);
+//        }
+//
+//    }
 
 
 
