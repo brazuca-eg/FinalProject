@@ -11,7 +11,7 @@ public final class Fields {
 	public static final String USER_SURNAME = "surname";
 	public static final String USER_ROLE_ID = "role_id";
 
-	//public static final String REQUEST_ID = "request_id";
+	public static final String REQUEST_ID = "request_id";
 	public static final String REQUEST_PRICE = "price";
 	public static final String REQUEST_DATE = "date";
 	public static final String REQUEST_STATUS_ID = "status_id";

@@ -6,7 +6,9 @@ import ua.kharkov.repairagency.db.entity.Request;
 import ua.kharkov.repairagency.db.entity.User;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DAO {
     private static DAO dao;
@@ -38,6 +40,8 @@ public class DAO {
     private static final String SQL_USER_REQUEST_LIST  =
             "SELECT request_id, date, status_id, user_id, master_id, name, description FROM request WHERE user_id=?";
 
+    private static final String SQL_USER_REQUEST_LIST2  =
+    "SELECT request_id, date, status.name, user_id, master_id, request.name, description FROM repair.request INNER JOIN repair.status ON  request.status_id = status.status_id  WHERE user_id=? AND status_id=?";
 
     private DAO(){
 
@@ -145,8 +149,46 @@ public class DAO {
             pool.getInstance().commitAndClose(con);
         }
         return requests;
-
     }
+
+    public Map<List<Request>,String> getSpecialisedUserRequests(User user, int status_id) {
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        Request request = null;
+        List<Request> requests = new ArrayList<>();
+        Map<List<Request>,String> map = new HashMap<>();
+        String res = null;
+        try {
+            con = pool.getConnection();
+            DAO.RequestMapper mapper = new DAO.RequestMapper();
+            pstmt = con.prepareStatement( SQL_USER_REQUEST_LIST2);
+            pstmt.setInt(1, user.getId());
+            pstmt.setInt(2, status_id);
+            resultSet = pstmt.executeQuery();
+            while (resultSet.next()){
+                Request request1 =new Request();
+                request.setId(resultSet.getInt(Fields.REQUEST_USER_ID));
+                request.setDate(resultSet.getDate(Fields.REQUEST_DATE));
+                res = resultSet.getString("status.name");
+                request.setUser_id(resultSet.getInt(Fields.REQUEST_USER_ID));
+                request.setMaster_id(resultSet.getInt(Fields.REQUEST_MASTER_ID));
+                request.setName(resultSet.getString(Fields.REQUEST_NAME));
+                request.setDescription(resultSet.getString(Fields.REQUEST_DESCRIPTION));
+                requests.add(request1);
+            }
+            map.put(requests, res);
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return map;
+    }
+
 
     public void pay(User user, double sum) {
         PreparedStatement preparedStatement = null;
@@ -288,7 +330,7 @@ public class DAO {
         public Request mapRow(ResultSet rs) {
             try {
                 Request request = new Request();
-                request.setId(rs.getInt(Fields.REQUEST_USER_ID));
+                request.setId(rs.getInt(Fields.REQUEST_ID ));
                // request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
                 request.setDate(rs.getDate(Fields.REQUEST_DATE));
                 request.setStatus_id(rs.getInt(Fields.REQUEST_STATUS_ID));
