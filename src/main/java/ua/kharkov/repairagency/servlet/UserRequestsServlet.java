@@ -30,7 +30,7 @@ public class UserRequestsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
-        requests = DAO.getInstance().getUserRequests(user);
+        requests = DAO.getInstance().getUserRequests();
         req.setAttribute("list", requests);
 
 

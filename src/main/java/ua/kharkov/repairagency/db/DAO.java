@@ -3,6 +3,7 @@ package ua.kharkov.repairagency.db;
 import com.sun.org.apache.regexp.internal.RE;
 import ua.kharkov.repairagency.db.entity.Balance;
 import ua.kharkov.repairagency.db.entity.Request;
+import ua.kharkov.repairagency.db.entity.RequestSQL;
 import ua.kharkov.repairagency.db.entity.User;
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,11 +38,27 @@ public class DAO {
     private static final String SQL_CREATE_USER_REQUEST  =
             "INSERT INTO request (user_id, master_id, name, description, date, status_id) values (?, 4, ?, ?, ?, 1)";
 
-    private static final String SQL_USER_REQUEST_LIST  =
-            "SELECT request_id, date, status_id, user_id, master_id, name, description FROM request WHERE user_id=?";
+    private static final String SQL_MANAGER_REQUEST_LIST  =
+            "SELECT * FROM request";
+//    private static final String SQL_MANAGER_REQUEST_LIST_DATE  =
+//            "SELECT * FROM request ORDER BY date";
+private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
+        "SELECT * FROM request ORDER BY ";
 
     private static final String SQL_USER_REQUEST_LIST2  =
     "SELECT request_id, date, status.name, user_id, master_id, request.name, description FROM repair.request INNER JOIN repair.status ON  request.status_id = status.status_id  WHERE user_id=? AND status_id=?";
+
+    private static final String SQL_STATUS_REQUEST  =
+    "SELECT status_id FROM  request WHERE request_id = ?";
+
+    private static final String SQL_UPDATE_UNPAID_REQUEST  =
+    "UPDATE repair.request SET request.price = ?, master_id = ? WHERE request_id=?";
+
+    private static final String SQL_MANAGER_REQUESTS  =
+            "SELECT request.request_id, t2.login, date,  request.name, request.description , request.price, status.name, t1.name, t1.surname FROM request \n" +
+            "INNER JOIN status ON   request.status_id = status.status_id  \n" +
+            "INNER JOIN user t1 ON  request.master_id = t1.user_id\n" +
+            "INNER JOIN user t2 ON  request.user_id = t2.user_id ";
 
     private DAO(){
 
@@ -123,25 +140,23 @@ public class DAO {
         }
     }
 
-    public List<Request> getUserRequests(User user) {
-        PreparedStatement pstmt = null;
+    public List<Request> getUserRequests() {
+        Statement statement = null;
         ResultSet resultSet = null;
         Connection con = null;
         Request request = null;
         List<Request> requests = new ArrayList<>();
-        // Request request = null;
         try {
             con = pool.getConnection();
             DAO.RequestMapper mapper = new DAO.RequestMapper();
-            pstmt = con.prepareStatement( SQL_USER_REQUEST_LIST);
-            pstmt.setInt(1, user.getId());
-            resultSet = pstmt.executeQuery();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(SQL_MANAGER_REQUEST_LIST);
             while (resultSet.next()){
-                Request request1 = mapper.mapRow(resultSet);
-                requests.add(request1);
+                request = mapper.mapRow(resultSet);
+                requests.add(request);
             }
             resultSet.close();
-            pstmt.close();
+            statement.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
@@ -150,6 +165,100 @@ public class DAO {
         }
         return requests;
     }
+
+    public List<RequestSQL> getManagerRequests() {
+        Statement statement = null;
+        ResultSet rs = null;
+        Connection con = null;
+
+        List<RequestSQL> requestsSQL = new ArrayList<>();
+        try {
+            con = DAO.getConnectionWithDriverManager();
+            statement = con.createStatement();
+            rs = statement.executeQuery(SQL_MANAGER_REQUESTS);
+            while (rs.next()){
+                RequestSQL request = new RequestSQL();
+                request.setId(rs.getInt("request_id"));
+                request.setUserlogin(rs.getString("login"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatus_name(rs.getString("status.name"));
+                request.setMaster_name(rs.getString("t1.name"));
+                request.setMaster_surname(rs.getString("t1.surname"));
+                requestsSQL.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requestsSQL;
+    }
+
+    public List<RequestSQL> getManagerRequests(String param) {
+        Statement statement = null;
+        ResultSet rs = null;
+        Connection con = null;
+        List<RequestSQL> requestsSQL = new ArrayList<>();
+        try {
+            con = DAO.getConnectionWithDriverManager();
+            statement = con.createStatement();
+            rs = statement.executeQuery(SQL_MANAGER_REQUESTS + " ORDER BY " + param);
+            while (rs.next()){
+                RequestSQL request = new RequestSQL();
+                request.setId(rs.getInt("request_id"));
+                request.setUserlogin(rs.getString("login"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatus_name(rs.getString("status.name"));
+                request.setMaster_name(rs.getString("t1.name"));
+                request.setMaster_surname(rs.getString("t1.surname"));
+                requestsSQL.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requestsSQL;
+    }
+
+    public List<Request> getUserRequestsSorted(String sortedValue) {
+        Statement statement = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        Request request = null;
+        List<Request> requests = new ArrayList<>();
+        try {
+            con = pool.getConnection();
+            DAO.RequestMapper mapper = new DAO.RequestMapper();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery( SQL_MANAGER_REQUEST_LIST_SORTED + sortedValue );
+            while (resultSet.next()){
+                request = mapper.mapRow(resultSet);
+                requests.add(request);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
+    }
+
 
     public Map<List<Request>,String> getSpecialisedUserRequests(User user, int status_id) {
         PreparedStatement pstmt = null;
@@ -208,6 +317,26 @@ public class DAO {
         }
     }
 
+    public void updateUnpaidRequest(int request_id, double price, int master_id) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setInt(2, master_id);
+            preparedStatement.setInt(3,request_id);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+
     public boolean updateBalance(User user, int sum) {
         Connection con = null;
         PreparedStatement preparedStatement = null;
@@ -254,6 +383,32 @@ public class DAO {
         }
         return user;
     }
+
+    public int statusOfRequest(int request_id){
+        int res = 0;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(SQL_STATUS_REQUEST);
+            pstmt.setInt(1, request_id);
+            resultSet = pstmt.executeQuery();
+            if (resultSet.next())
+               res = resultSet.getInt("status_id");;
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return res;
+    }
+
+
+
 
     public List<User> findClients(int role_id) {
         User user = null;
@@ -331,7 +486,7 @@ public class DAO {
             try {
                 Request request = new Request();
                 request.setId(rs.getInt(Fields.REQUEST_ID ));
-               // request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
                 request.setDate(rs.getDate(Fields.REQUEST_DATE));
                 request.setStatus_id(rs.getInt(Fields.REQUEST_STATUS_ID));
                 request.setUser_id(rs.getInt(Fields.REQUEST_USER_ID));
@@ -359,26 +514,38 @@ public class DAO {
         return connection;
     }
 
-//    public static void main(String[] args) {
-//        Connection con = null;
-//        PreparedStatement preparedStatement = null;
-//        boolean b = false;
-//        try {
-//            con = DAO.getConnectionWithDriverManager();
-//            preparedStatement = con.prepareStatement(SQL_UPDATE_BALANCE);
-//            preparedStatement.setInt(1, 100);
-//            preparedStatement.setInt(2, 7);
-//            preparedStatement.executeUpdate();
-//            preparedStatement.close();
-//            b = true;
-//        } catch (SQLException ex) {
-//            pool.getInstance().rollbackAndClose(con);
-//            ex.printStackTrace();
-//        } finally {
-//            pool.getInstance().commitAndClose(con);
-//        }
-//
-//    }
+    public static void main(String[] args) {
+        Statement statement = null;
+        ResultSet rs = null;
+        Connection con = null;
+        List<RequestSQL> requestsSQL = new ArrayList<>();
+        try {
+            con = DAO.getConnectionWithDriverManager();
+            statement = con.createStatement();
+            rs = statement.executeQuery(SQL_MANAGER_REQUESTS);
+            while (rs.next()){
+                RequestSQL request = new RequestSQL();
+                request.setId(rs.getInt("request_id"));
+                request.setUserlogin(rs.getString("login"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatus_name(rs.getString("status.name"));
+                request.setMaster_name(rs.getString("t1.name"));
+                request.setMaster_surname(rs.getString("t1.surname"));
+                requestsSQL.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        System.out.println(requestsSQL);
+    }
 
 
 

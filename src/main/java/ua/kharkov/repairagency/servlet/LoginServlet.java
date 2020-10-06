@@ -28,9 +28,14 @@ public class LoginServlet extends HttpServlet {
 				HttpSession session = req.getSession();
 				session.setAttribute("role", user.getRole_id());
 				session.setAttribute("current_user", user);
-				RequestDispatcher dispatcher = getServletContext()
-						.getRequestDispatcher("/clientWelcome");
-				dispatcher.forward(req, res);
+				if(user.getRole_id() == 1){
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/welcomeManager.jsp");
+					dispatcher.forward(req, res);
+				}else if(user.getRole_id() == 3){
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/clientWelcome");
+					dispatcher.forward(req, res);
+				}
+
 				//res.sendRedirect("/clientWelcome");
 			} else if(user==null){
 				errors.put("cant_find", "Нету такого пользователя");
