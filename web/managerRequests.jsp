@@ -9,6 +9,26 @@
 <body>
 <jsp:include page="header.jsp" />
     <br>
+    <div align="right">
+        <h3>Фильтр по статусу</h3>
+        <form method="get">
+            <select name = "filter_status1">
+                <c:forEach items="${statuses}" var="element">
+                    <option value="${element.id}" >${element.name}</option>
+                </c:forEach>
+                <input  type="submit" name="filter1" value="Фильтровать по статусу"/>
+            </select>
+        </form>
+        <form method="get">
+            <select name = "filter_status2">
+                <c:forEach items="${masters}" var="element">
+                    <option value="${element.id}" >${element.name} ${element.surname}</option>
+                </c:forEach>
+                <input  type="submit" name="filter2" value="Фильтровать по мастеру"/>
+            </select>
+        </form>
+    </div>
+
     <h3 align="center">Заявки на ремонт</h3>
     <table border="1" align="center" >
         <tr>
@@ -89,9 +109,7 @@
                 <input  type="submit" name="sort" value="Сортировать"/>
             </form>
         </div>
-        <div style="width: 33% ; float:left">
 
-        </div>
     </div>
 
 
