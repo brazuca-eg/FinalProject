@@ -9,7 +9,7 @@
       <p>Логин: </p>
       <input id="loginField" type="text" name="login" placeholder="Enter email" />
       <p>Пароль: </p>
-      <input id="passwordField" type="text" name="password" placeholder="Enter password" /><br>
+      <input id="passwordField" type="password" name="password" placeholder="Enter password" /><br>
       <input id="button" type="submit" name="Login" value="Login"/>
     </form>
 

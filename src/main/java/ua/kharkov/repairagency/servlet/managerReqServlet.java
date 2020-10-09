@@ -4,12 +4,16 @@ import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.*;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 @WebServlet("/seeRequests")
@@ -18,6 +22,7 @@ public class managerReqServlet extends HttpServlet {
     private List<RequestSQL> requests;
     private  List<User> masters;
     private  List<StatusEntity> statuses;
+    List< String> errors= new ArrayList<>();
     @Override
     public void init() throws ServletException {
         requests = DAO.getInstance().getManagerRequests();
@@ -29,8 +34,6 @@ public class managerReqServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         req.setAttribute("masters", masters);
         req.setAttribute("statuses", statuses);
-
-
 
         String value_of_sort = req.getParameter("select_sort");
         String filter1 = req.getParameter("filter_status1");
@@ -51,18 +54,6 @@ public class managerReqServlet extends HttpServlet {
             requests = DAO.getInstance().getManagerRequests();
             req.setAttribute("list", requests);
         }
-//        if(filter1!=null){
-//            int filter_status = Integer.parseInt(req.getParameter("filter_status1"));
-//            requests = DAO.getInstance().getManagerRequestsFilterStatus(filter_status);
-//            req.setAttribute("list", requests);
-//        }
-//        if(filter2!=null){
-//            int filter_status = Integer.parseInt(req.getParameter("filter_status2"));
-//            requests = DAO.getInstance().getManagerRequestsFilterMaster(filter_status);
-//            req.setAttribute("list", requests);
-//        }
-
-
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher(index);
         requestDispatcher.forward(req, res);
@@ -70,12 +61,29 @@ public class managerReqServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        int request_id = (int) req.getAttribute("ident");
-        double price = (double) req.getAttribute("price");
-        int master_id = (int) req.getAttribute("select_master");
+        int request_id = Integer.parseInt(req.getParameter("ident"));
+        double price = Double.parseDouble(req.getParameter("price"));
+        int master_id = Integer.parseInt(req.getParameter("select_master"));
         int status_id = DAO.getInstance().statusOfRequest(request_id);
-        if(status_id == Status.WAIT.getId()){
-            DAO.getInstance().updateUnpaidRequest(request_id, price, master_id);
+        boolean err = false;
+        if(status_id ==  Status.SERVICE.getId()){
+            if(price > 0){
+                DAO.getInstance().updateUnpaidRequest(request_id, price, master_id);
+                doGet(req,res);
+            }else{
+                errors.add("Price must be > 0");
+                err = true;
+                req.getRequestDispatcher("/error.jsp").forward(req, res);
+            }
+        }else{
+            errors.add("Your request id have not waiting status");
+            err = true;
+
+        }
+        if(err == true){
+            req.setAttribute("errors", errors);
+            req.setAttribute("path", req.getContextPath());
+            res.sendRedirect(req.getContextPath() + "/error");
         }
 
     }

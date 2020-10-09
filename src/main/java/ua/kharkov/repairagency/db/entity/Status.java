@@ -5,7 +5,8 @@ public enum Status {
     PAID ("Оплачено",2),
     CANCELLED ("Отменено",3),
     WORK("В работе",4),
-    END("Исполнено",5);
+    END("Исполнено",5),
+    SERVICE("Исполнено",6);
 
     private int id;
     private String name;

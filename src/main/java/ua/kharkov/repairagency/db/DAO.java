@@ -1,8 +1,6 @@
 package ua.kharkov.repairagency.db;
 
-import com.sun.org.apache.regexp.internal.RE;
 import ua.kharkov.repairagency.db.entity.*;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,14 +25,20 @@ public class DAO {
     private static final String SQL_CUSTOMER_BALANCE  =
             "SELECT balance FROM details WHERE repair.details.user_id=?";
 
-    private static final String SQL_PAY_BALANCE  =
-    "INSERT  details  (user_id, balance) VALUES (?, ?);";
+    private static final String SQL_PAY_BALANCE_FOR_USER  =
+    "INSERT INTO details  (user_id, balance) VALUES (?, ?);";
+
+
+
+    private static final String SQL_SET_REQUEST_PARAMETERS  =
+            "update request set status_id = 1, master_id = ?, price = ? where request_id = ?";
+
 
     private static final String SQL_UPDATE_BALANCE  =
             "UPDATE details SET balance=balance+? WHERE repair.details.user_id=?";
 
     private static final String SQL_CREATE_USER_REQUEST  =
-            "INSERT INTO request (user_id, master_id, name, description, date, status_id) values (?, 4, ?, ?, ?, 1)";
+            "INSERT INTO request (user_id, master_id, name, description, date, status_id) values (?, 4, ?, ?, ?, 6)";
 
     private static final String SQL_MANAGER_REQUEST_LIST  =
             "SELECT * FROM request";
@@ -48,8 +52,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     private static final String SQL_STATUS_REQUEST  =
     "SELECT status_id FROM  request WHERE request_id = ?";
 
-    private static final String SQL_UPDATE_UNPAID_REQUEST  =
-    "UPDATE repair.request SET request.price = ?, master_id = ? WHERE request_id=?";
 
     private static final String SQL_MANAGER_REQUESTS  =
             "SELECT request.request_id, t2.login, date,  request.name, request.description , request.price, status.name, t1.name, t1.surname FROM request \n" +
@@ -57,8 +59,19 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             "INNER JOIN user t1 ON  request.master_id = t1.user_id\n" +
             "INNER JOIN user t2 ON  request.user_id = t2.user_id ";
 
+    private static final String SQL_MASTER_REQUESTS  =
+            "SELECT request_id, t1.login, t1.name, t1.surname, date,  request.name, description , price, status.name FROM request \n" +
+                    "INNER JOIN status ON request.status_id = status.status_id  \n" +
+                    "INNER JOIN user t1 ON request.user_id = t1.user_id\n" +
+                    "INNER JOIN user t2 ON request.master_id = t2.user_id\n" +
+                    "WHERE t2.user_id=?";
+
+
     private static final String SQL_STATUS_ALL  =
             "SELECT * FROM STATUS";
+
+    private static final String SQL_UPDATE_UNPAID_REQUEST  =
+            "UPDATE repair.request SET request.price = ?, master_id = ? WHERE request_id=?";
 
     private DAO(){
 
@@ -69,6 +82,26 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return dao;
     }
+
+    public void updatePrice(double price, int masterId, int requestId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_UPDATE_UNPAID_REQUEST );
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setInt(2, masterId);
+            preparedStatement.setInt(3, requestId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
 
     public User login(String login, String password) {
         User user = null;
@@ -167,6 +200,39 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         return statuses ;
     }
 
+    public List<RequestMaster> getMasterRequests(int masterId) {
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rs  = null;
+        List<RequestMaster> requests = new ArrayList<>();
+        try {
+            con = pool.getConnection();
+            statement = con.prepareStatement(SQL_MASTER_REQUESTS);
+            statement.setInt(1, masterId);
+            rs = statement.executeQuery();
+            while (rs.next()){
+                RequestMaster request = new RequestMaster();
+                request.setId(rs.getInt("request_id"));
+                request.setClient_login(rs.getString("t1.login"));
+                request.setClient_name(rs.getString("t1.name"));
+                request.setClient_surname(rs.getString("t1.surname"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatus_name(rs.getString("status.name"));
+                requests.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
+    }
+
 
 
 
@@ -200,7 +266,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         Statement statement = null;
         ResultSet rs = null;
         Connection con = null;
-
         List<RequestSQL> requestsSQL = new ArrayList<>();
         try {
             con = DAO.getConnectionWithDriverManager();
@@ -402,7 +467,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         Connection con = null;
         try {
             con = pool.getConnection();
-            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
+            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE_FOR_USER);
             preparedStatement.setInt(1, user.getId());
             preparedStatement.setDouble(2, sum);
             preparedStatement.executeUpdate();
@@ -415,14 +480,36 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
     }
 
-    public void updateUnpaidRequest(int request_id, double price, int master_id) {
+//    public void updateUnpaidRequest(int request_id, double price, int master_id) {
+//        PreparedStatement preparedStatement = null;
+//        Connection con = null;
+//        try {
+//            con = pool.getConnection();
+//            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE_FOR_USER);
+//            preparedStatement.setDouble(1, price);
+//            preparedStatement.setInt(2, master_id);
+//            //preparedStatement.setInt(3,request_id);
+//            preparedStatement.executeUpdate();
+//            preparedStatement.close();
+//        } catch (SQLException ex) {
+//            pool.getInstance().rollbackAndClose(con);
+//            ex.printStackTrace();
+//        } finally {
+//            pool.getInstance().commitAndClose(con);
+//        }
+//    }
+
+
+
+
+    public void updateUnpaidRequest(int master_id, double price, int request_id) {
         PreparedStatement preparedStatement = null;
         Connection con = null;
         try {
             con = pool.getConnection();
-            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE);
-            preparedStatement.setDouble(1, price);
-            preparedStatement.setInt(2, master_id);
+            preparedStatement = con.prepareStatement(SQL_SET_REQUEST_PARAMETERS);
+            preparedStatement.setInt(1, master_id);
+            preparedStatement.setDouble(2, price);
             preparedStatement.setInt(3,request_id);
             preparedStatement.executeUpdate();
             preparedStatement.close();

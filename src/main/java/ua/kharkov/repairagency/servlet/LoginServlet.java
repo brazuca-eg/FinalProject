@@ -34,6 +34,9 @@ public class LoginServlet extends HttpServlet {
 				}else if(user.getRole_id() == 3){
 					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/clientWelcome");
 					dispatcher.forward(req, res);
+				}else if(user.getRole_id() == 2){
+					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/masterRequests");
+					dispatcher.forward(req, res);
 				}
 
 				//res.sendRedirect("/clientWelcome");
@@ -49,6 +52,8 @@ public class LoginServlet extends HttpServlet {
 		}
 		RequestDispatcher requestDispatcher = req.getRequestDispatcher("/login.jsp");
 		requestDispatcher.forward(req, res);
+
+
 
 
 //			if(user.getRole_id() == 1){

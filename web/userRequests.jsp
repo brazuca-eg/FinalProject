@@ -33,7 +33,10 @@
                     <td><c:out value="Отменено"/></td>
                 </c:when>
                 <c:when test="${element.status_id==4}">
-                    <td><c:out value="В работе"/></td>
+                <td><c:out value="В работе"/></td>
+                </c:when>
+                <c:when test="${element.status_id==6}">
+                    <td><c:out value="В обработке"/></td>
                 </c:when>
                 <c:otherwise>
                     <td><c:out value="Исполнено"/></td>
