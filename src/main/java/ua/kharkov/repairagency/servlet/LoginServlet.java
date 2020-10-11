@@ -1,8 +1,6 @@
 package ua.kharkov.repairagency.servlet;
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.User;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +16,12 @@ import java.util.Map;
 public class LoginServlet extends HttpServlet {
 	private User user = null;
 	Map<String, String> errors = new HashMap<String, String>();
+
+	@Override
+	public void init() throws ServletException {
+
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		String loginField = req.getParameter("login");
@@ -29,17 +33,15 @@ public class LoginServlet extends HttpServlet {
 				session.setAttribute("role", user.getRole_id());
 				session.setAttribute("current_user", user);
 				if(user.getRole_id() == 1){
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/welcomeManager.jsp");
-					dispatcher.forward(req, res);
+					String path = req.getContextPath() + "/manager_profile";
+					res.sendRedirect(path);
 				}else if(user.getRole_id() == 3){
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/clientWelcome");
-					dispatcher.forward(req, res);
+					String path = req.getContextPath() + "/clientWelcome";
+					res.sendRedirect(path);
 				}else if(user.getRole_id() == 2){
-					RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/masterRequests");
-					dispatcher.forward(req, res);
+					String path = req.getContextPath() + "/masterRequests";
+					res.sendRedirect(path);
 				}
-
-				//res.sendRedirect("/clientWelcome");
 			} else if(user==null){
 				errors.put("cant_find", "Нету такого пользователя");
 				req.setAttribute("errors", errors);
@@ -50,8 +52,7 @@ public class LoginServlet extends HttpServlet {
 			req.setAttribute("errors", errors);
 			req.getRequestDispatcher("/login.jsp").forward(req, res);
 		}
-		RequestDispatcher requestDispatcher = req.getRequestDispatcher("/login.jsp");
-		requestDispatcher.forward(req, res);
+
 
 
 
@@ -71,7 +72,7 @@ public class LoginServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.sendRedirect("registration.jsp");
+		//resp.sendRedirect("registration.jsp");
 	}
 }
 

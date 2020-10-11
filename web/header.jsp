@@ -5,9 +5,7 @@
     <link rel="stylesheet" href="css/header.css">
 </head>
 <ul>
-
     <%
-        PrintWriter out_pr = response.getWriter();
         String usMenu1 = "";
         String usMenu2="";
         String usMenu3="";

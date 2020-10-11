@@ -59,19 +59,31 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             "INNER JOIN user t1 ON  request.master_id = t1.user_id\n" +
             "INNER JOIN user t2 ON  request.user_id = t2.user_id ";
 
-    private static final String SQL_MASTER_REQUESTS  =
+    private static final String SQL_MASTER_REQUESTS_PAID  =
             "SELECT request_id, t1.login, t1.name, t1.surname, date,  request.name, description , price, status.name FROM request \n" +
                     "INNER JOIN status ON request.status_id = status.status_id  \n" +
                     "INNER JOIN user t1 ON request.user_id = t1.user_id\n" +
                     "INNER JOIN user t2 ON request.master_id = t2.user_id\n" +
-                    "WHERE t2.user_id=?";
+                    "WHERE t2.user_id=? AND status.status_id = 2 OR status.status_id = 4";
 
+    private static final String SQL_MASTER_REQUESTS_ARCHIVE =
+            "SELECT request_id, t1.login, t1.name, t1.surname, date,  request.name, description , price, status.name FROM request \n" +
+                    "INNER JOIN status ON request.status_id = status.status_id  \n" +
+                    "INNER JOIN user t1 ON request.user_id = t1.user_id\n" +
+                    "INNER JOIN user t2 ON request.master_id = t2.user_id\n" +
+                    "WHERE t2.user_id=? AND status.status_id = 5";
 
     private static final String SQL_STATUS_ALL  =
             "SELECT * FROM STATUS";
 
     private static final String SQL_UPDATE_UNPAID_REQUEST  =
             "UPDATE repair.request SET request.price = ?, master_id = ? WHERE request_id=?";
+
+    private static final String SQL_UPDATE_BY_MASTER  =
+            "UPDATE request SET status_id = ? WHERE request_id = ?";
+
+    private static final String SQL_SELECT_STATUS_BY_REQUEST_ID =
+            "select status_id from request where request_id = ?";
 
     private DAO(){
 
@@ -83,6 +95,40 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         return dao;
     }
 
+
+    public List<RequestMaster> getMasterRequestsArchive(int masterId) {
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rs  = null;
+        List<RequestMaster> requests = new ArrayList<>();
+        try {
+            con = pool.getConnection();
+            statement = con.prepareStatement(SQL_MASTER_REQUESTS_ARCHIVE);
+            statement.setInt(1, masterId);
+            rs = statement.executeQuery();
+            while (rs.next()){
+                RequestMaster request = new RequestMaster();
+                request.setId(rs.getInt("request_id"));
+                request.setClient_login(rs.getString("t1.login"));
+                request.setClient_name(rs.getString("t1.name"));
+                request.setClient_surname(rs.getString("t1.surname"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatus_name(rs.getString("status.name"));
+                requests.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
+    }
+
     public void updatePrice(double price, int masterId, int requestId) {
         PreparedStatement preparedStatement = null;
         Connection con = null;
@@ -92,6 +138,47 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             preparedStatement.setDouble(1, price);
             preparedStatement.setInt(2, masterId);
             preparedStatement.setInt(3, requestId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+    public int getStatusByRequestId(int requestId) {
+        int statusId = 0;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(SQL_SELECT_STATUS_BY_REQUEST_ID);
+            pstmt.setInt(1, requestId);
+            resultSet = pstmt.executeQuery();
+            if (resultSet.next())
+                statusId = resultSet.getInt("status_id");
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return statusId;
+    }
+
+    public void updateStatusByMaster(int statusId, int requestId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_UPDATE_BY_MASTER);
+            preparedStatement.setDouble(1, statusId);
+            preparedStatement.setDouble(2, requestId);
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException ex) {
@@ -207,7 +294,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         List<RequestMaster> requests = new ArrayList<>();
         try {
             con = pool.getConnection();
-            statement = con.prepareStatement(SQL_MASTER_REQUESTS);
+            statement = con.prepareStatement(SQL_MASTER_REQUESTS_PAID);
             statement.setInt(1, masterId);
             rs = statement.executeQuery();
             while (rs.next()){
