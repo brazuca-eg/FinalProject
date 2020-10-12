@@ -17,6 +17,7 @@ INSERT INTO repair.status (name) VALUE ("Оплачено");
 INSERT INTO repair.status (name) VALUE ("В работе");
 INSERT INTO repair.status (name) VALUE ("Исполнено");
 INSERT INTO repair.status (name) VALUE ("Отменено");
+INSERT INTO repair.status (name) VALUE ("Предварительно оплачено");
 
 INSERT INTO repair.details (user_id, balance) VALUE (1, 250);
 

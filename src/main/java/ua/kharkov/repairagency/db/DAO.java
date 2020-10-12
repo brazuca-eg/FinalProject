@@ -23,7 +23,7 @@ public class DAO {
             "SELECT * FROM user WHERE role_id=?";
 
     private static final String SQL_CUSTOMER_BALANCE  =
-            "SELECT balance FROM details WHERE repair.details.user_id=?";
+            "SELECT balance FROM details WHERE user_id=?";
 
     private static final String SQL_PAY_BALANCE_FOR_USER  =
     "INSERT INTO details  (user_id, balance) VALUES (?, ?);";
@@ -73,6 +73,14 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
                     "INNER JOIN user t2 ON request.master_id = t2.user_id\n" +
                     "WHERE t2.user_id=? AND status.status_id = 5";
 
+
+    private static final String SQL_USER_REQUESTS  =
+            "SELECT request_id, t2.login, t2.name, t2.surname, date,  request.name, description , price, status.name FROM repair.request\n" +
+                    "INNER JOIN repair.status ON request.status_id = status.status_id\n" +
+                    "INNER JOIN repair.user t1 ON request.user_id = t1.user_id\n" +
+                    "INNER JOIN repair.user t2 ON request.master_id = t2.user_id\n" +
+                    "WHERE t1.user_id=? AND status.status_id = ?;";
+
     private static final String SQL_STATUS_ALL  =
             "SELECT * FROM STATUS";
 
@@ -85,6 +93,15 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     private static final String SQL_SELECT_STATUS_BY_REQUEST_ID =
             "select status_id from request where request_id = ?";
 
+
+    private static final String SQL_USER_PRICE  ="SELECT price FROM request WHERE request_id = ?";
+
+    private static final String SQL_USER_PAYMENT_OPERATION1 = "UPDATE request SET payment = ? WHERE request_id = ?";
+
+    private static final String SQL_USER_PAYMENT_OPERATION2 = "UPDATE request SET status_id = ? WHERE request_id = ?";
+
+    private static final String SQL_USER_LOWER_BALANCE = "UPDATE details SET balance = balance - ? WHERE user_id = ?";
+
     private DAO(){
 
     }
@@ -93,6 +110,123 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             dao = new DAO();
         }
         return dao;
+    }
+
+    public double getPriceOfRequest(int reqId) {
+        double price = 0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(SQL_USER_PRICE);
+            pstmt.setInt(1, reqId);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+                price = rs.getDouble("price");
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return price;
+    }
+
+    public void userPayRequest1(int requestId, double price) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_USER_PAYMENT_OPERATION1);
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setInt(2, requestId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            System.out.println("error1");
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+    public void userPayRequest2(int reqId,  int statusId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_USER_PAYMENT_OPERATION2);
+            preparedStatement.setInt(1, statusId);
+            preparedStatement.setInt(2, reqId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            System.out.println("error2");
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+    public void setSqlUserLowerBalance(int userId, double sum) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_USER_LOWER_BALANCE);
+            preparedStatement.setDouble(1, sum);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+
+
+
+
+    public List<RequestUser> getUserRequests(int masterId, int statusId) {
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rs  = null;
+        List<RequestUser> requests = new ArrayList<>();
+        try {
+            con = pool.getConnection();
+            statement = con.prepareStatement( SQL_USER_REQUESTS);
+            statement.setInt(1, masterId);
+            statement.setInt(2, statusId);
+            rs = statement.executeQuery();
+            while (rs.next()){
+                RequestUser request = new RequestUser();
+                request.setId(rs.getInt("request_id"));
+                request.setMasterLogin(rs.getString("t2.login"));
+                request.setMasterName(rs.getString("t2.name"));
+                request.setMasterSurname(rs.getString("t2.surname"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatusName(rs.getString("status.name"));
+                requests.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
     }
 
 
@@ -321,33 +455,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     }
 
 
-
-
-    public List<Request> getUserRequests() {
-        Statement statement = null;
-        ResultSet resultSet = null;
-        Connection con = null;
-        Request request = null;
-        List<Request> requests = new ArrayList<>();
-        try {
-            con = pool.getConnection();
-            DAO.RequestMapper mapper = new DAO.RequestMapper();
-            statement = con.createStatement();
-            resultSet = statement.executeQuery(SQL_MANAGER_REQUEST_LIST);
-            while (resultSet.next()){
-                request = mapper.mapRow(resultSet);
-                requests.add(request);
-            }
-            resultSet.close();
-            statement.close();
-        } catch (SQLException ex) {
-            pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
-        } finally {
-            pool.getInstance().commitAndClose(con);
-        }
-        return requests;
-    }
 
     public List<RequestSQL> getManagerRequests() {
         Statement statement = null;
@@ -710,7 +817,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     }
 
     public Balance checkCustomerBalance(User user) {
-        int u_id = user.getId();
+        int userId = user.getId();
         PreparedStatement pstmt = null;
         ResultSet resultSet = null;
         Connection con = null;
@@ -718,17 +825,17 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         try {
             con = pool.getConnection();
             pstmt = con.prepareStatement(SQL_CUSTOMER_BALANCE);
-            pstmt.setInt(1,  u_id);
+            pstmt.setInt(1,  userId);
             resultSet = pstmt.executeQuery();
-            while (resultSet.next())
+            if (resultSet.next())
                 balance.setBalance(resultSet.getDouble("balance"));
             resultSet.close();
             pstmt.close();
         } catch (SQLException ex) {
-            //pool.getInstance().rollbackAndClose(con);
+            pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
         } finally {
-            // pool.getInstance().commitAndClose(con);
+            pool.getInstance().commitAndClose(con);
         }
         return balance;
     }

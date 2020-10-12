@@ -1,9 +1,7 @@
 package ua.kharkov.repairagency.servlet;
 
 import ua.kharkov.repairagency.db.DAO;
-import ua.kharkov.repairagency.db.entity.Request;
-import ua.kharkov.repairagency.db.entity.Status;
-import ua.kharkov.repairagency.db.entity.User;
+import ua.kharkov.repairagency.db.entity.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,7 +18,8 @@ import java.util.Map;
 
 @WebServlet("/myRequests")
 public class UserRequestsServlet extends HttpServlet {
-    List<Request> requests = new ArrayList<>();
+
+    List<RequestUser> requests = new ArrayList<>();
     @Override
     public void init() throws ServletException {
 
@@ -30,20 +29,32 @@ public class UserRequestsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
-        requests = DAO.getInstance().getUserRequests();
-        req.setAttribute("list", requests);
+        requests = DAO.getInstance().getUserRequests(user.getId(), Status.WAIT.getId());
+        req.setAttribute("waitingPaymentList", requests);
 
 
-
-        //        Map <List<Request>, String> map = new HashMap<>();
-//        map = DAO.getInstance().getSpecialisedUserRequests(user, Status.WAIT.getId());
-//        req.setAttribute("wait", map);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/userRequests.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/user_pay.jsp");
         requestDispatcher.forward(req, res);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("current_user");
+        if(req.getParameter("pay")!=null){
+            int reqId = Integer.parseInt(req.getParameter("pay"));
+            Balance balance = DAO.getInstance().checkCustomerBalance(user);
+            double bal = balance.getBalance();
+            double pay = DAO.getInstance().getPriceOfRequest(reqId);
+            if(bal>pay){
+                DAO.getInstance().userPayRequest1(reqId, pay);
+                DAO.getInstance().userPayRequest2(reqId, Status.PAID_USER.getId());
+                DAO.getInstance().setSqlUserLowerBalance(user.getId(), pay);
+            }else{
+                return;
+            }
+        }
+        doGet(req, res);
 
     }
 

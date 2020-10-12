@@ -6,7 +6,8 @@ public enum Status {
     CANCELLED ("Отменено",3),
     WORK("В работе",4),
     END("Исполнено",5),
-    SERVICE("Исполнено",6);
+    SERVICE("В обработке",6),
+    PAID_USER("Предварительно оплачено",8);
 
     private int id;
     private String name;
