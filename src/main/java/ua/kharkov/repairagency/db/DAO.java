@@ -128,6 +128,9 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     private static final String SQL_USER_UPDATE_ARCHIVE_FEEDBACK = "UPDATE repair.feedback SET text = ?, stars = ?   WHERE feedback.request_id = ? ";
 
 
+    private static final String SQL_USER_DEFAULT_FEEDBACK  = "INSERT INTO repair.feedback (request_id, text, stars) VALUE(?, '',0);";
+
+
     private DAO(){
 
     }

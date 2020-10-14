@@ -9,13 +9,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Error page</title>
 </head>
 <body>
 Error
-<c:forEach items="${errors}" var="element">
-        <td>${element}</td>
-</c:forEach>
+<td>${error}</td>
+
+<%--<c:forEach items="${error}" var="element">--%>
+<%--        <td>${element}</td>--%>
+<%--</c:forEach>--%>
 
 <button><a href="${path}">Назад</a></button>
 

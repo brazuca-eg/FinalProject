@@ -1,5 +1,7 @@
 package ua.kharkov.repairagency.servlet;
 
+import ua.kharkov.repairagency.exception.DataBaseException;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,17 +17,22 @@ import java.util.Map;
 
 @WebServlet("/error")
 public class ErrorServlet extends HttpServlet {
-    List<String> errors;
+//    List<String> errors;
+    DataBaseException ex = new DataBaseException();
     @Override
     public void init() throws ServletException {
-        errors = new ArrayList<>();
+//        errors = new ArrayList<>();
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        errors = (List<String>) req.getAttribute("errors");
-        String path = (String) req.getAttribute("path");
-        req.setAttribute("errors", errors);
-        req.setAttribute("path", path);
+//        errors = (List<String>) req.getAttribute("errors");
+//        String path = (String) req.getAttribute("path");
+//        req.setAttribute("errors", errors);
+//        req.setAttribute("path", path);
+
+        ex = (DataBaseException) req.getAttribute("error");
+        req.setAttribute("error", ex);
+
         ServletContext servletContext = getServletContext();
         RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher("/error.jsp");
         requestDispatcher.forward(req, res);
