@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<jsp:useBean id="status" class="ua.kharkov.repairagency.db.entity.Status"/>--%>
+
 <html>
 <head>
     <title>My requests</title>
@@ -9,7 +9,7 @@
 <body>
 <jsp:include page="headers/header_client.jsp" />
 
-<h3 align="center">Ожидают оплаты</h3>
+<h3 align="center">Все заказы</h3>
 <table border="1" align="center" >
     <tr>
         <td>Идентификатор заказа</td>
@@ -21,9 +21,8 @@
         <td>Описание заказа</td>
         <td>Цена</td>
         <td>Статус</td>
-        <td>Оплатить</td>
     </tr>
-    <c:forEach items="${waitingPaymentList}" var="element">
+    <c:forEach items="${requestList}" var="element">
         <td>${element.id}</td>
         <td>${element.masterLogin}</td>
         <td>${element.masterName}</td>
@@ -33,11 +32,6 @@
         <td>${element.description}</td>
         <td>${element.price}</td>
         <td>${element.statusName}</td>
-        <td>
-            <form method="post">
-                <button name = "pay" value="${element.id}">Оплатить сумму</button>
-            </form>
-        </td>
         </tr>
     </c:forEach>
 

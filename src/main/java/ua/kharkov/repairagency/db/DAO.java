@@ -81,6 +81,14 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
                     "INNER JOIN repair.user t2 ON request.master_id = t2.user_id\n" +
                     "WHERE t1.user_id=? AND status.status_id = ?;";
 
+    private static final String SQL_USER_ALL_REQUESTS  =
+            "SELECT request_id, t2.login, t2.name, t2.surname, date,  request.name, description , price, status.name FROM repair.request " +
+                    "INNER JOIN repair.status ON request.status_id = status.status_id " +
+                    "INNER JOIN repair.user t1 ON request.user_id = t1.user_id " +
+                    "INNER JOIN repair.user t2 ON request.master_id = t2.user_id  " +
+                    "WHERE request.user_id = ?";
+
+
     private static final String SQL_STATUS_ALL  =
             "SELECT * FROM STATUS";
 
@@ -102,6 +110,24 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
     private static final String SQL_USER_LOWER_BALANCE = "UPDATE details SET balance = balance - ? WHERE user_id = ?";
 
+
+    private static final String SQL_ABOUT_USER_AND_BALANCE =
+    "SELECT user.user_id, login, name, surname, role_id, email, details.balance FROM repair.user\n"+
+            "INNER JOIN repair.details ON details.user_id = user.user_id\n"+
+            "WHERE role_id=?";
+
+
+    private static final String SQL_USER_REQUESTS_ARCHIVE =
+            "SELECT request.request_id, t2.login, t2.name, t2.surname, date,  request.name, description , price, status.name, feedback.text, feedback.stars FROM repair.request\n" +
+                    "INNER JOIN repair.status ON request.status_id = status.status_id \n" +
+                    "INNER JOIN repair.user t1 ON request.user_id = t1.user_id\n" +
+                    "INNER JOIN repair.user t2 ON request.master_id = t2.user_id\n" +
+                    "INNER JOIN repair.feedback ON request.request_id = feedback.request_id \n" +
+                    "WHERE t1.user_id = ? AND status.status_id >0";
+
+    private static final String SQL_USER_UPDATE_ARCHIVE_FEEDBACK = "UPDATE repair.feedback SET text = ?, stars = ?   WHERE feedback.request_id = ? ";
+
+
     private DAO(){
 
     }
@@ -111,6 +137,67 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return dao;
     }
+
+
+    public void userArchiveFeedback(Feedback feedback, int reqId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_USER_UPDATE_ARCHIVE_FEEDBACK);
+            preparedStatement.setString(1, feedback.getText());
+            preparedStatement.setInt(2, feedback.getStars());
+            preparedStatement.setInt(3, reqId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+
+    public Map<Balance, User> findClientsAndBalance(int role_id) {
+        User user = null;
+        Balance balance = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        Map<Balance,User> userBalances = new HashMap<>();
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(SQL_ABOUT_USER_AND_BALANCE );
+            pstmt.setInt(1, role_id);
+            rs = pstmt.executeQuery();
+            while (rs.next()){
+                user = new User();
+                user.setId(rs.getInt(Fields.ENTITY_ID));
+                user.setLogin(rs.getString(Fields.USER_LOGIN));
+                user.setName(rs.getString(Fields.USER_NAME));
+                user.setSurname(rs.getString(Fields.USER_SURNAME));
+                user.setEmail(rs.getString(Fields.USER_EMAIL));
+                balance = new Balance();
+                balance.setBalance(rs.getDouble("balance"));
+                balance.setId(user.getId());
+                userBalances.put(balance,user);
+            }
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return userBalances;
+    }
+
+
+
+
+
 
     public double getPriceOfRequest(int reqId) {
         double price = 0;
@@ -191,7 +278,38 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
     }
 
-
+    public List<RequestUser> getUserAllRequests(User user) {
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rs  = null;
+        List<RequestUser> requests = new ArrayList<>();
+        try {
+            con = pool.getConnection();
+            statement = con.prepareStatement(SQL_USER_ALL_REQUESTS);
+            statement.setInt(1, user.getId());
+            rs = statement.executeQuery();
+            while(rs.next()){
+                RequestUser request = new RequestUser();
+                request.setId(rs.getInt("request_id"));
+                request.setMasterLogin(rs.getString("t2.login"));
+                request.setMasterName(rs.getString("t2.name"));
+                request.setMasterSurname(rs.getString("t2.surname"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatusName(rs.getString("status.name"));
+                requests.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
+    }
 
 
 
@@ -252,6 +370,42 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
                 request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
                 request.setStatus_name(rs.getString("status.name"));
                 requests.add(request);
+            }
+            rs.close();
+            statement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return requests;
+    }
+
+    public Map<RequestMaster, Feedback> getUserRequestsArchiveFeedback(int userId) {
+        PreparedStatement statement = null;
+        Connection con = null;
+        ResultSet rs  = null;
+        Map<RequestMaster, Feedback> requests = new HashMap<>();
+        try {
+            con = pool.getConnection();
+            statement = con.prepareStatement(SQL_USER_REQUESTS_ARCHIVE);
+            statement.setInt(1, userId);
+            rs = statement.executeQuery();
+            while (rs.next()){
+                RequestMaster request = new RequestMaster();
+                request.setId(rs.getInt("request_id"));
+                request.setClient_login(rs.getString("t2.login"));
+                request.setClient_name(rs.getString("t2.name"));
+                request.setClient_surname(rs.getString("t2.surname"));
+                request.setDate(rs.getDate(Fields.REQUEST_DATE));
+                request.setName(rs.getString(Fields.REQUEST_NAME));
+                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
+                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
+                request.setStatus_name(rs.getString("status.name"));
+                Feedback feedback = new Feedback();
+                feedback.setText(rs.getString("text"));
+                feedback.setStars(rs.getInt("stars"));
+                requests.put(request, feedback);
             }
             rs.close();
             statement.close();
@@ -674,27 +828,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
     }
 
-//    public void updateUnpaidRequest(int request_id, double price, int master_id) {
-//        PreparedStatement preparedStatement = null;
-//        Connection con = null;
-//        try {
-//            con = pool.getConnection();
-//            preparedStatement = con.prepareStatement(SQL_PAY_BALANCE_FOR_USER);
-//            preparedStatement.setDouble(1, price);
-//            preparedStatement.setInt(2, master_id);
-//            //preparedStatement.setInt(3,request_id);
-//            preparedStatement.executeUpdate();
-//            preparedStatement.close();
-//        } catch (SQLException ex) {
-//            pool.getInstance().rollbackAndClose(con);
-//            ex.printStackTrace();
-//        } finally {
-//            pool.getInstance().commitAndClose(con);
-//        }
-//    }
-
-
-
 
     public void updateUnpaidRequest(int master_id, double price, int request_id) {
         PreparedStatement preparedStatement = null;
@@ -785,8 +918,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return res;
     }
-
-
 
 
     public List<User> findClients(int role_id) {

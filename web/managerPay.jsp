@@ -27,7 +27,7 @@
             <div align="center">
                 <h3>Найденный пользователь</h3>
                 <p>Логин: ${found.login}</p>
-                <p>Почта: ${element.email}</p>
+                <p>Почта: ${found.email}</p>
                 <p>Имя: ${found.name}</p>
                 <p>Фамилия: ${found.surname}</p>
                 <p>Текущий баланс: ${balance.balance}</p>
@@ -48,22 +48,28 @@
         <%}%>
 
         <table border="1" align="center" >
+
             <tr >
                 <td>Уникальный идентификатор</td>
                 <td>Логин пользователя</td>
-                <td>Email</td>
                 <td>Имя пользователя</td>
                 <td>Фамилия пользователя</td>
+                <td>Email</td>
+                <td>Баланс</td>
             </tr>
-            <c:forEach items="${customers}" var="element">
-                <tr>
-                    <td>${element.id}</td>
-                    <td>${element.login}</td>
-                    <td>${element.email}</td>
-                    <td>${element.name}</td>
-                    <td>${element.surname}</td>
+
+            <c:forEach var="entry" items="${clients}">
+                <tr >
+                    <td>${entry.value.id}</td>
+                    <td>${entry.value.login}</td>
+                    <td>${entry.value.name}</td>
+                    <td>${entry.value.surname}</td>
+                    <td>${entry.value.email}</td>
+                    <td>${entry.key.balance}</td>
                 </tr>
             </c:forEach>
+
+
         </table>
 
 
