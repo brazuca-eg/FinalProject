@@ -17,7 +17,17 @@ public class DataBaseException extends RuntimeException {
 
     }
 
-    public DataBaseException(String message){
-        super(message);
+
+    public DataBaseException(String message) {
+        this.message = message;
+    }
+
+    //    public DataBaseException(String message){
+//        super(message);
+//    }
+
+    @Override
+    public String toString() {
+        return "Message: " + message ;
     }
 }

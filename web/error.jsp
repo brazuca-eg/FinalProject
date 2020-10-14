@@ -1,10 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Admin
-  Date: 05.10.2020
-  Time: 23:38
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -12,14 +6,12 @@
     <title>Error page</title>
 </head>
 <body>
-Error
-<td>${error}</td>
+<img src="https://cmates.blob.core.windows.net/cmmaterial/material_18_4_25_rqyps.jpeg"  align="center">
 
-<%--<c:forEach items="${error}" var="element">--%>
-<%--        <td>${element}</td>--%>
-<%--</c:forEach>--%>
+<h3 align="center">${error}</h3>>
 
-<button><a href="${path}">Назад</a></button>
+
+<button ><a href="${path}">Назад</a></button>
 
 </body>
 </html>

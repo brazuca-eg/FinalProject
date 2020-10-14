@@ -39,30 +39,32 @@ public class UserArchiveServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 //        HttpSession session = req.getSession();
 //        User user = (User)session.getAttribute("current_user");
-        if(req.getParameter("ident")!=null && req.getParameter("textb")!=null && req.getParameter("answer")!=null ){
-            try{
-                Feedback feedback = new Feedback();
-                feedback.setText(req.getParameter("textb"));
-                feedback.setStars(Integer.parseInt(req.getParameter("answer")));
-                DAO.getInstance().userArchiveFeedback(feedback, Integer.parseInt(req.getParameter("ident")));
-            }catch (DataBaseException ex){
-                ex.setMessage("Проблемы с БД");
-                req.setAttribute("error", ex);
-                String path = "/error";
-                ServletContext servletContext = getServletContext();
-                RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
-                requestDispatcher.forward(req, res);
-//                req.setAttribute("error", ex);
-//                req.getRequestDispatcher("/error.jsp").forward(req, res);
+        if(Integer.parseInt(req.getParameter("ident"))>0 && req.getParameter("textb")!="" && Integer.parseInt(req.getParameter("answer"))>0 ){
+            for (Map.Entry<RequestMaster, Feedback> entry : archive.entrySet()) {
+                int reqId = entry.getKey().getId();
+                if(reqId == Integer.parseInt(req.getParameter("ident"))){
+                    try{
+                        Feedback feedback = new Feedback();
+                        feedback.setText(req.getParameter("textb"));
+                        feedback.setStars(Integer.parseInt(req.getParameter("answer")));
+                        DAO.getInstance().userArchiveFeedback(feedback, Integer.parseInt(req.getParameter("ident")));
+                        doGet(req,res);
+                    }catch (DataBaseException ex){
+                        ex.setMessage("Проблемы с БД");
+                        req.setAttribute("error", ex);
+                        req.getRequestDispatcher("/error.jsp").forward(req, res);
+                    }
+                }else{
+                    DataBaseException ex = new DataBaseException("Такого идентификатора нету в вашем аррхиве ");
+                    req.setAttribute("error", ex);
+                    req.getRequestDispatcher("/error.jsp").forward(req, res);
+                }
             }
+
         }else{
-            DataBaseException ex = new DataBaseException();
-            ex.setMessage("Заполните все поля ");
+            DataBaseException ex = new DataBaseException("Заполните все поля ");
             req.setAttribute("error", ex);
-            String path = "/error";
-            ServletContext servletContext = getServletContext();
-            RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
-            requestDispatcher.forward(req, res);
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
 
     }
