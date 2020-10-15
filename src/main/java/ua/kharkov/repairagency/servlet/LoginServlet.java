@@ -24,23 +24,25 @@ public class LoginServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		String path = req.getContextPath();
+		HttpSession session = req.getSession();
+		session.setAttribute("path", path);
 		String loginField = req.getParameter("login");
 		String passwordField = req.getParameter("password");
 		if (loginField != "" && passwordField != "") {
 			user = DAO.getInstance().login(loginField, passwordField);
 			if (user != null) {
-				HttpSession session = req.getSession();
 				session.setAttribute("role", user.getRole_id());
 				session.setAttribute("current_user", user);
 				if(user.getRole_id() == 1){
-					String path = req.getContextPath() + "/manager_profile";
-					res.sendRedirect(path);
+					String path1 = req.getContextPath() + "/manager_profile";
+					res.sendRedirect(path1);
 				}else if(user.getRole_id() == 3){
-					String path = req.getContextPath() + "/clientWelcome";
-					res.sendRedirect(path);
+					String path2 = req.getContextPath() + "/clientWelcome";
+					res.sendRedirect(path2);
 				}else if(user.getRole_id() == 2){
-					String path = req.getContextPath() + "/masterRequests";
-					res.sendRedirect(path);
+					String path3 = req.getContextPath() + "/masterRequests";
+					res.sendRedirect(path3);
 				}
 			} else if(user==null){
 				errors.put("cant_find", "Нету такого пользователя");
@@ -67,7 +69,7 @@ public class LoginServlet extends HttpServlet {
 //				res.sendRedirect("welcomeUser.jsp");
 //			}
 
-	//}
+		//}
 	}
 
 	@Override
@@ -75,9 +77,6 @@ public class LoginServlet extends HttpServlet {
 		//resp.sendRedirect("registration.jsp");
 	}
 }
-
-
-	
 
 	
 	

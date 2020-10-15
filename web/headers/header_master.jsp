@@ -5,8 +5,8 @@
 </head>
 <ul>
     <li><a href="#">Главная</a></li>
-    <li><a href="#">Мой кабинет</a></li>
-    <li><a href="#">Текущие заявки</a></li>
-    <li><a href="#">Архив</a></li>
-    <li><a href="#">Выйти</a></li>
+    <li><a href="${path}/">Мой кабинет</a></li>
+    <li><a href="${path}/masterRequests">Текущие заявки</a></li>
+    <li><a href="${path}/master_archive">Архив</a></li>
+    <li><a href="${path}/logout">Выйти</a></li>
 </ul>

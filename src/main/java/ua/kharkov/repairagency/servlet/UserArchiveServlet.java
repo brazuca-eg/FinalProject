@@ -1,14 +1,11 @@
 package ua.kharkov.repairagency.servlet;
 
-
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.Feedback;
 import ua.kharkov.repairagency.db.entity.RequestMaster;
 import ua.kharkov.repairagency.db.entity.User;
 import ua.kharkov.repairagency.exception.DataBaseException;
-
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 
 @WebServlet("/userArchive")

@@ -29,7 +29,7 @@ public class MasterArchiveServlet extends HttpServlet {
 
 
 
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/master_archive.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher(index);
         requestDispatcher.forward(req, res);
     }
 

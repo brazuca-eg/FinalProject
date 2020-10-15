@@ -8,7 +8,7 @@
 <body>
 <img src="https://cmates.blob.core.windows.net/cmmaterial/material_18_4_25_rqyps.jpeg"  align="center">
 
-<h3 align="center">${error}</h3>>
+<h3 align="center">${error}</h3>
 
 
 <button ><a href="${path}">Назад</a></button>

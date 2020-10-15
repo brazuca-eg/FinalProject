@@ -9,7 +9,7 @@
     </head>
 
     <body >
-        <jsp:include page="header.jsp" />
+        <jsp:include page="headers/header_manager.jsp" />
         <br>
 
         <form method="get" action="" >

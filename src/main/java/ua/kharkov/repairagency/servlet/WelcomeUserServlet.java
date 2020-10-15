@@ -15,7 +15,6 @@ import java.io.IOException;
 
 @WebServlet("/clientWelcome")
 public class WelcomeUserServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession();
@@ -23,7 +22,7 @@ public class WelcomeUserServlet extends HttpServlet {
         req.setAttribute("found", user);
         Balance balance = DAO.getInstance().checkCustomerBalance(user);
         req.setAttribute("balance",balance);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/welcomeUser.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcomeUser.jsp");
         requestDispatcher.forward(req, res);
     }
     @Override

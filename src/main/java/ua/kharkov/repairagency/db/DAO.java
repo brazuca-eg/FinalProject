@@ -10,6 +10,7 @@ import java.util.Map;
 public class DAO {
     private static DAO dao;
     private static final ConnectionPool pool = ConnectionPool.getInstance();
+
     private static final String SQL_LOGIN_USER =
             "SELECT * FROM user WHERE login=? AND password=?";
     private static final String SQL_REGISTER_USER  =
@@ -40,8 +41,6 @@ public class DAO {
     private static final String SQL_CREATE_USER_REQUEST  =
             "INSERT INTO request (user_id, master_id, name, description, date, status_id) values (?, 4, ?, ?, ?, 6)";
 
-    private static final String SQL_MANAGER_REQUEST_LIST  =
-            "SELECT * FROM request";
 
 private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         "SELECT * FROM request ORDER BY ";
@@ -130,6 +129,9 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
     private static final String SQL_USER_DEFAULT_FEEDBACK  = "INSERT INTO repair.feedback (request_id, text, stars) VALUE(?, '',0);";
 
+    private static final String SQL_MANAGER_CANCELL_REQUEST  = "UPDATE repair.details, repair.request SET details.balance = balance + request.payment, request.payment = 0\n"+
+            "WHERE request.request_id = ? AND request.user_id = details.user_id";
+
 
     private DAO(){
 
@@ -139,6 +141,40 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             dao = new DAO();
         }
         return dao;
+    }
+
+    public void userDefaultFeedback(int reqId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_USER_DEFAULT_FEEDBACK);
+            preparedStatement.setInt(1, reqId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+    public void cancelRequest(int reqId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_MANAGER_CANCELL_REQUEST);
+            preparedStatement.setInt(1, reqId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
     }
 
 
@@ -196,10 +232,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return userBalances;
     }
-
-
-
-
 
 
     public double getPriceOfRequest(int reqId) {
@@ -313,7 +345,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return requests;
     }
-
 
 
     public List<RequestUser> getUserRequests(int masterId, int statusId) {
@@ -532,7 +563,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     public void makeRequest(int user_id, String name, String description,String date) {
         PreparedStatement preparedStatement = null;
         Connection con = null;
-       // Request request = null;
         try {
             con = pool.getConnection();
             DAO.UserMapper mapper = new DAO.UserMapper();
@@ -610,7 +640,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return requests;
     }
-
 
 
     public List<RequestSQL> getManagerRequests() {

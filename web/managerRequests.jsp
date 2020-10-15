@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/managerReqs.css">
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="headers/header_manager.jsp" />
     <br>
     <div>
         <div style="width: 50%; float:left">

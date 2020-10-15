@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>My requests</title>
-    <link rel="stylesheet" href="css/userReqs.css">
+    <link rel="stylesheet" href="../../css/userReqs.css">
 </head>
 <body>
 <jsp:include page="headers/header_client.jsp" />

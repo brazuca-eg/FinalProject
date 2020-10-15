@@ -6,7 +6,7 @@
     <title>Title</title>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="headers/header_master.jsp" />
 
 <h3 align="center">Текущие заявки на ремонт</h3>
 <table border="1" align="center" >

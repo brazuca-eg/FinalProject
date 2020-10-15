@@ -8,7 +8,7 @@
 <body>
 
 
-    <jsp:include page="header.jsp" />
+    <jsp:include page="headers/header_client.jsp" />
     <h3>Мой профиль</h3>
     <p>Логин: ${found.login}</p>
     <p>Почта: ${found.email}</p>
