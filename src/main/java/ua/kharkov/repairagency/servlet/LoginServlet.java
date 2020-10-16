@@ -1,4 +1,5 @@
 package ua.kharkov.repairagency.servlet;
+import ua.kharkov.repairagency.LocaleManager;
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.User;
 import javax.servlet.ServletException;
@@ -9,23 +10,46 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 	private User user = null;
 	Map<String, String> errors = new HashMap<String, String>();
-
+	ResourceBundle resourceBundleRu;
+	ResourceBundle resourceBundleEn;
+	ResourceBundle resourceBundle;
 	@Override
 	public void init() throws ServletException {
-
+		Locale localeRu = new Locale("ru", "RU");
+		resourceBundleRu = ResourceBundle.getBundle("page_content", localeRu);
+		Locale localeEn = Locale.ENGLISH;
+		resourceBundleEn = ResourceBundle.getBundle("page_content", localeEn);
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String path = req.getContextPath();
 		HttpSession session = req.getSession();
+		session.setAttribute("locale_ru", resourceBundleRu);
+		session.setAttribute("locale_en", resourceBundleEn);
+		session.setAttribute("locale", "ru");
+
+		if(session.getAttribute("locale").equals("ru")){
+			this.resourceBundle = resourceBundleRu;
+		}else{
+			this.resourceBundle = resourceBundleEn;
+		}
+		//req.setAttribute("bundle", this.resourceBundle);
+		req.setAttribute("one", resourceBundle.getString(LocaleManager.LOGIN_PAGE_LOGIN));
+		req.setAttribute("two", resourceBundle.getString(LocaleManager.LOGIN_PAGE_PASSWORD));
+		req.setAttribute("thr", resourceBundle.getString(LocaleManager.LOGIN_PAGE_NO_ACCOUNT));
+		req.setAttribute("fou", resourceBundle.getString(LocaleManager.LOGIN_PAGE_REGISTER));
+
+
+		String path = req.getContextPath();
 		session.setAttribute("path", path);
 		String loginField = req.getParameter("login");
 		String passwordField = req.getParameter("password");
