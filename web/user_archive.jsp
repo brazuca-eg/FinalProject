@@ -5,23 +5,23 @@
     <title>Title</title>
 </head>
 <body>
-<jsp:include page="headers/header_client.jsp" />
+<jsp:include page="header_client.jsp" />
 
 
 <table border="1" align="center" >
 
     <tr >
-        <td>Уникальный идентификатор заказа</td>
-        <td>Логин мастера</td>
-        <td>Имя мастера</td>
-        <td>Фамилия масера</td>
-        <td>Дата</td>
-        <td>Название заказа</td>
-        <td>Описание заказа</td>
-        <td>Цена</td>
-        <td>Статус</td>
-        <td>Отзыв</td>
-        <td>Звезды</td>
+        <td>${order_id}</td>
+        <td>${order_master_login}</td>
+        <td>${order_master_name}</td>
+        <td>${order_master_surname}</td>
+        <td>${order_date}</td>
+        <td>${order_name}</td>
+        <td>${order_desc}</td>
+        <td>${order_price}</td>
+        <td>${order_status}</td>
+        <td>${feedback}</td>
+        <td>${stars}</td>
     </tr>
 
     <c:forEach var="entry" items="${archiveList}">

@@ -7,20 +7,30 @@
     <link rel="stylesheet" href="css/userReqs.css">
 </head>
 <body>
-<jsp:include page="headers/header_client.jsp" />
+<jsp:include page="header_client.jsp" />
 
-<h3 align="center">Все заказы</h3>
+<form method="post" >
+    <select name="localeForm">
+        <option value="ru">RU</option>
+        <option value="en">EN</option>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+
+<h3 align="center">${all_order_field}</h3>
 <table border="1" align="center" >
     <tr>
-        <td>Идентификатор заказа</td>
-        <td>Логин мастера</td>
-        <td>Имя мастера</td>
-        <td>Фамилия мастера</td>
-        <td>Дата</td>
-        <td>Название заказа</td>
-        <td>Описание заказа</td>
-        <td>Цена</td>
-        <td>Статус</td>
+        <td>${order_id}</td>
+        <td>${order_master_login}</td>
+        <td>${order_master_name}</td>
+        <td>${order_master_surname}</td>
+        <td>${order_date}</td>
+        <td>${order_name}</td>
+        <td>${order_desc}</td>
+        <td>${order_price}</td>
+        <td>${order_status}</td>
+
+
     </tr>
     <c:forEach items="${requestList}" var="element">
         <td>${element.id}</td>

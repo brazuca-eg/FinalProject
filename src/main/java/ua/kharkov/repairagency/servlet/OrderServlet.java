@@ -2,7 +2,6 @@ package ua.kharkov.repairagency.servlet;
 
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.User;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 @WebServlet("/request")
 public class OrderServlet extends HttpServlet {
     private final static String index = "/order.jsp";
@@ -35,6 +35,8 @@ public class OrderServlet extends HttpServlet {
         SimpleDateFormat formatter = new SimpleDateFormat(pattern);
         String mysqlDateString = formatter.format(now);
         DAO.getInstance().makeRequest(user.getId(), name, desc , mysqlDateString);
+        int reqId = DAO.getInstance().findReqId(user.getId(), name, desc);
+        DAO.getInstance().userDefaultFeedback(reqId);
         doGet(req, res);
     }
 

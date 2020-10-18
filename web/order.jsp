@@ -4,7 +4,7 @@
     <title>MakeOrder</title>
 </head>
 <body>
-<jsp:include page="headers/header_client.jsp" />
+<jsp:include page="header_client.jsp" />
 
 <form method="post" action="" >
         <p>Название заказа: </p><br>

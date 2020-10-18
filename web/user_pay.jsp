@@ -1,27 +1,27 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<jsp:useBean id="status" class="ua.kharkov.repairagency.db.entity.Status"/>--%>
+
 <html>
 <head>
     <title>My requests</title>
-    <link rel="stylesheet" href="../../css/userReqs.css">
+    <link rel="stylesheet" href="css/userReqs.css">
 </head>
 <body>
-<jsp:include page="headers/header_client.jsp" />
+<jsp:include page="header_client.jsp" />
 
-<h3 align="center">Ожидают оплаты</h3>
+<h3 align="center">${wait}</h3>
 <table border="1" align="center" >
     <tr>
-        <td>Идентификатор заказа</td>
-        <td>Логин мастера</td>
-        <td>Имя мастера</td>
-        <td>Фамилия мастера</td>
-        <td>Дата</td>
-        <td>Название заказа</td>
-        <td>Описание заказа</td>
-        <td>Цена</td>
-        <td>Статус</td>
-        <td>Оплатить</td>
+        <td>${order_id}</td>
+        <td>${order_master_login}</td>
+        <td>${order_master_name}</td>
+        <td>${order_master_surname}</td>
+        <td>${order_date}</td>
+        <td>${order_name}</td>
+        <td>${order_desc}</td>
+        <td>${order_price}</td>
+        <td>${order_status}</td>
+        <td>${pay}</td>
     </tr>
     <c:forEach items="${waitingPaymentList}" var="element">
         <td>${element.id}</td>
@@ -35,7 +35,7 @@
         <td>${element.statusName}</td>
         <td>
             <form method="post">
-                <button name = "pay" value="${element.id}">Оплатить сумму</button>
+                <button name = "pay" value="${element.id}">${make_pay}</button>
             </form>
         </td>
         </tr>

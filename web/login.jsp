@@ -9,6 +9,14 @@
   <body>
     <jsp:include page="header.jsp" />
 
+    <form method="post" >
+      <select name="localeForm">
+        <option value="ru">RU</option>
+        <option value="en">EN</option>
+      </select>
+      <input type="submit" value="Submit">
+    </form>
+
     <form method="get" action="" >
 
       <p>${one}: </p>

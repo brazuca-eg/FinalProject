@@ -127,10 +127,14 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
     private static final String SQL_USER_UPDATE_ARCHIVE_FEEDBACK = "UPDATE repair.feedback SET text = ?, stars = ?   WHERE feedback.request_id = ? ";
 
 
-    private static final String SQL_USER_DEFAULT_FEEDBACK  = "INSERT INTO repair.feedback (request_id, text, stars) VALUE(?, '',0);";
-
     private static final String SQL_MANAGER_CANCELL_REQUEST  = "UPDATE repair.details, repair.request SET details.balance = balance + request.payment, request.payment = 0\n"+
             "WHERE request.request_id = ? AND request.user_id = details.user_id";
+
+    private static final String SQL_FIND_REQ_ID = "SELECT request_id FROM repair.request WHERE user_id = ? AND name = ? AND description = ?";
+
+    private static final String SQL_USER_DEFAULT_FEEDBACK  = "INSERT INTO repair.feedback (request_id, text, stars) VALUE(?, '',0);";
+
+
 
 
     private DAO(){
@@ -158,6 +162,31 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         } finally {
             pool.getInstance().commitAndClose(con);
         }
+    }
+
+    public int findReqId(int user_id , String name, String description) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        int reqId = 0;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_FIND_REQ_ID);
+            preparedStatement.setInt(1, user_id);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, description);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+                reqId = resultSet.getInt("request_id");
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return reqId;
     }
 
     public void cancelRequest(int reqId) {

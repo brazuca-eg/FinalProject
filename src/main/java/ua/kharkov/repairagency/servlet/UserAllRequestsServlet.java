@@ -32,7 +32,18 @@ public class UserAllRequestsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        HttpSession session = req.getSession();
+        if(req.getParameter("localeForm").equals("en")){
+            session.removeAttribute("locale");
+            session.setAttribute("locale", "en");
+            String path3 = req.getContextPath() + "/allUserRequests";
+            resp.sendRedirect(path3);
+        }else if(req.getParameter("localeForm").equals("ru")){
+            session.removeAttribute("locale");
+            session.setAttribute("locale", "ru");
+            String path3 = req.getContextPath() + "/allUserRequests";
+            resp.sendRedirect(path3);
+        }
     }
 
     @Override
