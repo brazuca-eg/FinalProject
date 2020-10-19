@@ -32,7 +32,7 @@ public class MasterReqServlet extends HttpServlet {
         req.setAttribute("status_finish", Status.END.getName());
 
 
-        req.setAttribute("link",req.getContextPath() + "/master_archive");
+//        req.setAttribute("link",req.getContextPath() + "/master_archive");
 
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");

@@ -7,7 +7,7 @@
 </head>
 <body>
 <jsp:include page="headers/header_master.jsp" />
-
+<br>
 <h3 align="center">${current}</h3>
 <table border="1" align="center" >
     <tr>
@@ -53,7 +53,7 @@
 
 </table>
 
-<a href="${link}">${archive}</a>
+<%--<a href="${link}">${archive}</a>--%>
 
 <jsp:include page="footer.jsp" />
 

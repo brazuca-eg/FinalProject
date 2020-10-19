@@ -89,11 +89,8 @@
     </table>
 
     <hr align="center" width="100%" color="Red" /><br>
-    <h3 align="center">Действия</h3>
 
-
-    <div style="width: 100%">
-        <div style="width: 33% ; float:left">
+    <div style="width: 100%" align="center">
             <h3>Назначить цену и мастера для заказа</h3>
             <form method="post">
                 <p>Введите идентификатор:</p><input type="number" size="40" name="ident">
@@ -106,14 +103,7 @@
                 </select>
                 <input id="button" type="submit" name="send" value="Send"/>
             </form>
-        </div>
-
-
-
     </div>
-
-
-    <br><br>
 
 
 <jsp:include page="footer.jsp" />

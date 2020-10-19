@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="css/header.css">
 </head>
 <ul>
-    <li><a href="#">${h1}</a></li>
+    <li><a  href="${path}/main.jsp">${h1}</a></li>
     <li><a href="${path}/clientWelcome">${с_one}</a></li>
     <li><a href="${path}/request">${c_two}</a></li>
     <li><a href="${path}/myRequests">${с_six}</a></li>

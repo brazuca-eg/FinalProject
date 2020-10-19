@@ -105,7 +105,6 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
     private static final String SQL_USER_PAYMENT_OPERATION = "UPDATE request SET payment = ?, status_id = ?  WHERE request_id = ?";
 
-//    private static final String SQL_USER_PAYMENT_OPERATION2 = "UPDATE request SET status_id = ? WHERE request_id = ?";
 
     private static final String SQL_USER_LOWER_BALANCE = "UPDATE details SET balance = balance - ? WHERE user_id = ?";
 
@@ -122,7 +121,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
                     "INNER JOIN repair.user t1 ON request.user_id = t1.user_id\n" +
                     "INNER JOIN repair.user t2 ON request.master_id = t2.user_id\n" +
                     "INNER JOIN repair.feedback ON request.request_id = feedback.request_id \n" +
-                    "WHERE t1.user_id = ? AND status.status_id >0";
+                    "WHERE t1.user_id = ? AND status.status_id = 5";
 
     private static final String SQL_USER_UPDATE_ARCHIVE_FEEDBACK = "UPDATE repair.feedback SET text = ?, stars = ?   WHERE feedback.request_id = ? ";
 

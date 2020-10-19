@@ -6,7 +6,7 @@
 </head>
 <ul>
 
-    <li><a href="${path}">${h1}</a></li>
+    <li><a  href="${path}/main.jsp">${h1}</a></li>
     <li><a href="${path}/login">${h2}</a></li>
     <li><a href="${path}/register">${h3}</a></li>
 <%--    <li>--%>

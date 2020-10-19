@@ -16,8 +16,7 @@
     <p>Фамилия: ${found.surname}</p>
     <p>Текущий баланс: ${balance.balance}</p>
     <br>${first}
-    <a href="http://localhost:8080/Epam_Project_war_exploded/myRequests" >Мои заказы</a>
-    <a href="http://localhost:8080/Epam_Project_war_exploded/request"  >Сделать заказ</a>
+
 
 
     <form  method="post">
