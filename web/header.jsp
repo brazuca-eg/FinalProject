@@ -9,14 +9,6 @@
     <li><a  href="${path}/main.jsp">${h1}</a></li>
     <li><a href="${path}/login">${h2}</a></li>
     <li><a href="${path}/register">${h3}</a></li>
-<%--    <li>--%>
-<%--        <form method="get" >--%>
-<%--            <select name="localeForm">--%>
-<%--                <option value="ru">RU</option>--%>
-<%--                <option value="en" selected>EN</option>--%>
-<%--            </select>--%>
-<%--            <input type="submit" value="Submit">--%>
-<%--        </form>--%>
-<%--    </li>--%>
+
 
 </ul>

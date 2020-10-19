@@ -46,7 +46,7 @@ public class LocaleFilter implements Filter {
         req.setAttribute("thr", currentBundle.getString(LocaleManager.LOGIN_PAGE_NO_ACCOUNT));
         req.setAttribute("fou", currentBundle.getString(LocaleManager.LOGIN_PAGE_REGISTER));
 
-        req.setAttribute("с_one", currentBundle.getString(LocaleManager.HEADER_CABINET));
+        req.setAttribute("cabinet", currentBundle.getString(LocaleManager.HEADER_CABINET));
         req.setAttribute("c_two", currentBundle.getString(LocaleManager.HEADER_ORDER));
         req.setAttribute("с_th", currentBundle.getString(LocaleManager.HEADER_ALL_REQUESTS));
         req.setAttribute("с_fo", currentBundle.getString(LocaleManager.HEADER_ARCHIVE));

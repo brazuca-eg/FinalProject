@@ -3,13 +3,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Current master's requests</title>
+    <link rel="stylesheet" href="css/table.css">
 </head>
 <body>
 <jsp:include page="headers/header_master.jsp" />
 <br>
 <h3 align="center">${current}</h3>
-<table border="1" align="center" >
+<table class="table_blur" align="center" >
     <tr>
         <td>${order_id}</td>
         <td>${client_login}</td>

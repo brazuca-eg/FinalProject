@@ -6,6 +6,8 @@
 <head>
     <title>See requests</title>
     <link rel="stylesheet" href="css/managerReqs.css">
+    <link rel="stylesheet" href="css/table.css">
+
 </head>
 <body>
 <jsp:include page="headers/header_manager.jsp" />
@@ -53,7 +55,7 @@
     </div>
 
     <h3 align="center">Заявки на ремонт</h3>
-    <table border="1" align="center" >
+    <table  align="center" class="table_blur" >
         <tr>
             <td>Идентификатор заказа</td>
             <td>Логин пользователя</td>

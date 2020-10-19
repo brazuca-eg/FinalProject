@@ -2,7 +2,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Master's archive requests</title>
+    <link rel="stylesheet" href="css/table.css">
 </head>
 <body>
 
@@ -10,7 +11,7 @@
 <jsp:include page="headers/header_master.jsp" />
 <br>
 <h3 align="center">Архив работ</h3>
-<table border="1" align="center" >
+<table  align="center" class="table_blur">
     <tr>
         <td>Идентификатор заказа</td>
         <td>Логин заказчика</td>

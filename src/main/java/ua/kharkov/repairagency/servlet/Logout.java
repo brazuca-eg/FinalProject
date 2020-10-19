@@ -19,6 +19,5 @@ public class Logout extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

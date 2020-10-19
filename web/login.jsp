@@ -37,8 +37,11 @@
 
 
     <form method="get" >
-      <input  type="submit" name="reg" value="${fou}" />
+      <button>
+        <a href="${path}/register">Регистрация</a>
+      </button>
     </form>
+
 
     <jsp:include page="footer.jsp" />
 

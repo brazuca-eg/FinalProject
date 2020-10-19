@@ -2,13 +2,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Client's archive</title>
+    <link rel="stylesheet" href="css/table.css">
 </head>
 <body>
 <jsp:include page="header_client.jsp" />
 
-
-<table border="1" align="center" >
+<br>
+<table align="center" class="table_blur" >
 
     <tr >
         <td>${order_id}</td>
@@ -43,6 +44,7 @@
 <hr>
 
     <br>
+<div align="center">
     <h3>Изменить отзыв</h3>
     <form method="post">
         <p>Идентификатор заказа: </p><input  type="number" name="ident" placeholder="Enter id" value="0" />
@@ -55,6 +57,7 @@
         <input type="radio" name="answer" value="5">5<Br>
         <input  type="submit" name="Изменить" />
     </form>
+</div>
 
 <jsp:include page="footer.jsp" />
 </body>
