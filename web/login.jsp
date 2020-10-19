@@ -2,6 +2,8 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<%--<%@ taglib prefix = "ex" uri = "Epam_Project\web\WEB-INF\custom.tld"%>--%>
+<%--<%@ taglib prefix = "ex" uri = "WEB-INF/custom.tld"%>--%>
 <html>
   <head>
     <title>Login page</title>
@@ -26,8 +28,7 @@
       <input id="button" type="submit" name="log" value="Login"/>
     </form>
 
-    <p>${errors.cant_find}</p>
-    <p>${errors.validate}</p>
+
     <br>
 
     <h3>

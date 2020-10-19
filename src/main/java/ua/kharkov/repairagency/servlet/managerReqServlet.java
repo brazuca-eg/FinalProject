@@ -4,17 +4,13 @@ import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.*;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+
 
 @WebServlet("/seeRequests")
 public class managerReqServlet extends HttpServlet {
@@ -61,30 +57,32 @@ public class managerReqServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        int request_id = Integer.parseInt(req.getParameter("ident"));
-        double price = Double.parseDouble(req.getParameter("price"));
-        int master_id = Integer.parseInt(req.getParameter("select_master"));
-        int status_id = DAO.getInstance().statusOfRequest(request_id);
-        boolean err = false;
-        if(status_id ==  Status.SERVICE.getId()){
-            if(price > 0){
-                DAO.getInstance().updateUnpaidRequest(request_id, price, master_id);
-                doGet(req,res);
-            }else{
-                errors.add("Price must be > 0");
-                err = true;
-                req.getRequestDispatcher("/error.jsp").forward(req, res);
+        if(req.getParameter("ident")!=null && req.getParameter("price")!=null){
+            int request_id = Integer.parseInt(req.getParameter("ident"));
+            double price = Double.parseDouble(req.getParameter("price"));
+            int master_id = Integer.parseInt(req.getParameter("select_master"));
+            if(request_id > 0 && price > 0 ){
+                if(master_id!=4){
+                    int status_id = DAO.getInstance().statusOfRequest(request_id);
+                    if(status_id ==  Status.SERVICE.getId()){
+                        DAO.getInstance().updateUnpaidRequest(master_id, price, request_id);
+                        doGet(req,res);
+                    }else{
+                        req.setAttribute("error", "У введенного идентификатора нету ожидающего для обработки статуса");
+                        req.getRequestDispatcher("/error.jsp").forward(req, res);
+                    }
+                }else{
+                    req.setAttribute("error", "Выберите мастера для исполнения (кроме master dafault)");
+                    req.getRequestDispatcher("/error.jsp").forward(req, res);
+                }
             }
         }else{
-            errors.add("Your request id have not waiting status");
-            err = true;
+            req.setAttribute("error", "Необходимо заполнить все поля");
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
+        }
+        //int status_id = DAO.getInstance().statusOfRequest(request_id);
 
-        }
-        if(err == true){
-            req.setAttribute("errors", errors);
-            req.setAttribute("path", req.getContextPath());
-            res.sendRedirect(req.getContextPath() + "/error");
-        }
+
 
     }
 

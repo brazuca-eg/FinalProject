@@ -13,6 +13,8 @@
         <input id="descField" type="text" name="desc" placeholder="Enter description" /><br>
         <input id="button" type="submit" name="send" value="Send"/>
     </form>
+    <br>
+    ${know}
 
 <jsp:include page="footer.jsp" />
 </body>

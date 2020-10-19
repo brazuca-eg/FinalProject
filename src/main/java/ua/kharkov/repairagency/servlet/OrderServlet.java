@@ -12,13 +12,12 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @WebServlet("/request")
 public class OrderServlet extends HttpServlet {
     private final static String index = "/order.jsp";
-    Map<String, String> errors = new HashMap<String, String>();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         RequestDispatcher requestDispatcher = req.getRequestDispatcher(index);
@@ -34,10 +33,37 @@ public class OrderServlet extends HttpServlet {
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat formatter = new SimpleDateFormat(pattern);
         String mysqlDateString = formatter.format(now);
-        DAO.getInstance().makeRequest(user.getId(), name, desc , mysqlDateString);
-        int reqId = DAO.getInstance().findReqId(user.getId(), name, desc);
-        DAO.getInstance().userDefaultFeedback(reqId);
-        doGet(req, res);
+        if(name!= null && desc!=null){
+            if(name.equals("") || desc.equals("")){
+                req.setAttribute("error", "Все поля должны быть заполнены");
+                req.getRequestDispatcher("/error.jsp").forward(req, res);
+            }else{
+                DAO.getInstance().makeRequest(user.getId(), name, desc , mysqlDateString);
+                int reqId = DAO.getInstance().findReqId(user.getId(), name, desc);
+                DAO.getInstance().userDefaultFeedback(reqId);
+                req.setAttribute("know", "Ваш заказ успешно отправлен на обработку");
+                doGet(req, res);
+            }
+        }
+
+
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

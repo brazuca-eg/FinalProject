@@ -20,7 +20,6 @@ public class ManagerCabinet extends HttpServlet {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
         req.setAttribute("found", user);
-
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/manager_cabinet.jsp");
         requestDispatcher.forward(req, res);
     }

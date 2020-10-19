@@ -27,8 +27,6 @@ public class MasterArchiveServlet extends HttpServlet {
         archive = DAO.getInstance().getMasterRequestsArchive(user.getId());
         req.setAttribute("archiveList", archive);
 
-
-
         RequestDispatcher requestDispatcher = req.getRequestDispatcher(index);
         requestDispatcher.forward(req, res);
     }

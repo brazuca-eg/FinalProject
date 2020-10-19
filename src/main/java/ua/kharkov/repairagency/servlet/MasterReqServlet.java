@@ -58,7 +58,7 @@ public class MasterReqServlet extends HttpServlet {
             if(req.getParameter("finish")!=null){
                 int req_id = Integer.parseInt(req.getParameter("finish"));
                 int statusId = DAO.getInstance().getStatusByRequestId(req_id);
-                statusId ++;
+                statusId++;
                 DAO.getInstance().updateStatusByMaster(Status.END.getId(), req_id);
             }
         }

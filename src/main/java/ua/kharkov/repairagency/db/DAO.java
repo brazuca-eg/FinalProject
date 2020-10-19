@@ -134,6 +134,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
     private static final String SQL_USER_DEFAULT_FEEDBACK  = "INSERT INTO repair.feedback (request_id, text, stars) VALUE(?, '',0);";
 
+    private static final String SQL_CHECK_USER_EXIST = "SELECT user_id FROM repair.user WHERE login = ? OR email = ?;";
 
 
 
@@ -146,6 +147,34 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         }
         return dao;
     }
+
+    //
+    public int checkExstingUser(String login,  String email) {
+        User user = null;
+        int res = 0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            pstmt = con.prepareStatement(SQL_CHECK_USER_EXIST);
+            pstmt.setString(1, login);
+            pstmt.setString(2, email);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+                res = rs.getInt("user_id");
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return res;
+    }
+    //
 
     public void userDefaultFeedback(int reqId) {
         PreparedStatement preparedStatement = null;

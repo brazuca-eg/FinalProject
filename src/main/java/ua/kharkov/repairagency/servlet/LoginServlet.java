@@ -16,8 +16,6 @@ import java.util.ResourceBundle;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-	private User user = null;
-	Map<String, String> errors = new HashMap<String, String>();
 
 	@Override
 	public void init() throws ServletException {
@@ -26,46 +24,59 @@ public class LoginServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		User user = null;
 		String path = req.getContextPath();
 		HttpSession session = req.getSession();
 		session.setAttribute("path", path);
-
-
 		String loginField = req.getParameter("login");
 		String passwordField = req.getParameter("password");
-		if (loginField != "" && passwordField != "") {
-			user = DAO.getInstance().login(loginField, passwordField);
-			if (user != null) {
-				session.setAttribute("role", user.getRole_id());
-				session.setAttribute("current_user", user);
-				if (user.getRole_id() == 1) {
-					String path1 = req.getContextPath() + "/manager_profile";
-					res.sendRedirect(path1);
-				} else if (user.getRole_id() == 3) {
-					String path2 = req.getContextPath() + "/clientWelcome";
-					res.sendRedirect(path2);
-				} else if (user.getRole_id() == 2) {
-					String path3 = req.getContextPath() + "/masterRequests";
-					res.sendRedirect(path3);
+		if (loginField != null && passwordField != null){
+			if (loginField != "" && passwordField != "") {
+				user = DAO.getInstance().login(loginField, passwordField);
+				if (user != null) {
+					session.setAttribute("role", user.getRole_id());
+					session.setAttribute("current_user", user);
+					if (user.getRole_id() == 1) {
+						String path1 = req.getContextPath() + "/manager_profile";
+						res.sendRedirect(path1);
+					} else if (user.getRole_id() == 3) {
+						String path2 = req.getContextPath() + "/clientWelcome";
+						res.sendRedirect(path2);
+					} else if (user.getRole_id() == 2) {
+						String path3 = req.getContextPath() + "/masterRequests";
+						res.sendRedirect(path3);
+					}
+				} else if (user == null) {
+					req.setAttribute("error", "Такого пользователя нету в базе");
+					req.getRequestDispatcher("/error.jsp").forward(req, res);
 				}
-			} else if (user == null) {
-				errors.put("cant_find", "Нету такого пользователя");
-				req.setAttribute("errors", errors);
-				req.getRequestDispatcher("/login.jsp").forward(req, res);
 			}
-		} else {
-			errors.put("validate", "Заполните все поля");
-			req.setAttribute("errors", errors);
+			else {
+				req.setAttribute("error", "Заполните все поля");
+				req.getRequestDispatcher("/error.jsp").forward(req, res);
+			}
+		}else {
 			req.getRequestDispatcher("/login.jsp").forward(req, res);
 		}
+
+
+
+
 	}
-
-
 
 
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+		HttpSession session = req.getSession();
+		if(req.getParameter("localeForm").equals("en")){
+			session.removeAttribute("locale");
+			session.setAttribute("locale", "en");
+			req.getRequestDispatcher("/login.jsp").forward(req, resp);
+		}else if(req.getParameter("localeForm").equals("ru")){
+			session.removeAttribute("locale");
+			session.setAttribute("locale", "ru");
+			req.getRequestDispatcher("/login.jsp").forward(req, resp);
+		}
 	}
 
 

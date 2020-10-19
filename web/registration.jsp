@@ -55,7 +55,7 @@
             <input id="button" class="green" type="submit" name="Закончить регистрацию" />
         </form>
     </div>
-    <p align="center">${errors.validate}</p>
+
 
     <jsp:include page="footer.jsp" />
 </body>

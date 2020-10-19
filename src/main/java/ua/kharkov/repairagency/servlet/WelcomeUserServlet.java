@@ -21,16 +21,6 @@ public class WelcomeUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        //currentBundle = (ResourceBundle) session.getAttribute("bundle");
-        //System.out.println(currentBundle.getString(LocaleManager.HEADER_CABINET));
-
-//        session.setAttribute("с_one", currentBundle.getString(LocaleManager.HEADER_CABINET));
-//        session.setAttribute("c_two", currentBundle.getString(LocaleManager.HEADER_ORDER));
-//        session.setAttribute("с_th", currentBundle.getString(LocaleManager.HEADER_ALL_REQUESTS));
-//        session.setAttribute("с_fo", currentBundle.getString(LocaleManager.HEADER_ARCHIVE));
-//        session.setAttribute("с_fiv", currentBundle.getString(LocaleManager.HEADER_LOGOUT));
-//        session.setAttribute("с_six", currentBundle.getString(LocaleManager.HEADER_PAY));
-
 
         User user = (User) session.getAttribute("current_user");
         req.setAttribute("found", user);
