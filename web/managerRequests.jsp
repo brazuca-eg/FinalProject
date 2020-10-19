@@ -84,16 +84,6 @@
                 <td>${element.master_name} </td>
                 <td>${element.master_surname}</td>
 
-<%--                <c:choose>--%>
-<%--                    <c:when test="${element.master_id==4}">--%>
-<%--                        <td><c:out value="Пока не назначен"/></td>--%>
-<%--                    </c:when>--%>
-<%--                    <c:when test="${element.master_id!=4}">--%>
-<%--                        <% User master = DAO.getInstance().findUserId(request.getAttribute());--%>
-<%--                            String name = master.getName() + " " + master.getSurname();%>--%>
-<%--                        <td><% name.toString(); %></td>--%>
-<%--                    </c:when>--%>
-<%--                </c:choose>--%>
             </tr>
         </c:forEach>
     </table>

@@ -57,6 +57,8 @@ public class LocaleFilter implements Filter {
         req.setAttribute("m_two", currentBundle.getString(LocaleManager.HEADER_MANAGER_PAY));
         req.setAttribute("mas_one", currentBundle.getString(LocaleManager.HEADER_MASTER_CURRENT));
 
+        req.setAttribute("confirm_manager", currentBundle.getString("header.manager_confirm"));
+
 
         req.setAttribute("order_id", currentBundle.getString(LocaleManager.REQ_ID));
         req.setAttribute("order_master_login", currentBundle.getString(LocaleManager.MASTER_LOGIN));

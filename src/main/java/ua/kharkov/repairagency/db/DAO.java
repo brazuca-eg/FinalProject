@@ -103,9 +103,9 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
     private static final String SQL_USER_PRICE  ="SELECT price FROM request WHERE request_id = ?";
 
-    private static final String SQL_USER_PAYMENT_OPERATION1 = "UPDATE request SET payment = ? WHERE request_id = ?";
+    private static final String SQL_USER_PAYMENT_OPERATION = "UPDATE request SET payment = ?, status_id = ?  WHERE request_id = ?";
 
-    private static final String SQL_USER_PAYMENT_OPERATION2 = "UPDATE request SET status_id = ? WHERE request_id = ?";
+//    private static final String SQL_USER_PAYMENT_OPERATION2 = "UPDATE request SET status_id = ? WHERE request_id = ?";
 
     private static final String SQL_USER_LOWER_BALANCE = "UPDATE details SET balance = balance - ? WHERE user_id = ?";
 
@@ -136,6 +136,8 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
     private static final String SQL_CHECK_USER_EXIST = "SELECT user_id FROM repair.user WHERE login = ? OR email = ?;";
 
+    private static final String SQL_CHECK_USERS_EXISTING_REQUEST = "SELECT user_id FROM repair.request WHERE request_id = ?";
+
 
 
     private DAO(){
@@ -148,9 +150,53 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         return dao;
     }
 
+
+    public int checkUserExistingRequest(int reqId) {
+        int res = 0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            pstmt = con.prepareStatement(SQL_CHECK_USERS_EXISTING_REQUEST);
+            pstmt.setInt(1, reqId);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+                res = rs.getInt("user_id");
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return res;
+    }
+
+    public void userPayRequest( double price, int statusId, int requestId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_USER_PAYMENT_OPERATION);
+            preparedStatement.setDouble(1, price);
+            preparedStatement.setInt(2, statusId);
+            preparedStatement.setInt(3, requestId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+
     //
-    public int checkExstingUser(String login,  String email) {
-        User user = null;
+    public int checkExstingUser(String login,  String email){
         int res = 0;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -315,43 +361,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
         return price;
     }
 
-    public void userPayRequest1(int requestId, double price) {
-        PreparedStatement preparedStatement = null;
-        Connection con = null;
-        try {
-            con = pool.getConnection();
-            preparedStatement = con.prepareStatement(SQL_USER_PAYMENT_OPERATION1);
-            preparedStatement.setDouble(1, price);
-            preparedStatement.setInt(2, requestId);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-        } catch (SQLException ex) {
-            System.out.println("error1");
-            pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
-        } finally {
-            pool.getInstance().commitAndClose(con);
-        }
-    }
 
-    public void userPayRequest2(int reqId,  int statusId) {
-        PreparedStatement preparedStatement = null;
-        Connection con = null;
-        try {
-            con = pool.getConnection();
-            preparedStatement = con.prepareStatement(SQL_USER_PAYMENT_OPERATION2);
-            preparedStatement.setInt(1, statusId);
-            preparedStatement.setInt(2, reqId);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-        } catch (SQLException ex) {
-            System.out.println("error2");
-            pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
-        } finally {
-            pool.getInstance().commitAndClose(con);
-        }
-    }
 
     public void setSqlUserLowerBalance(int userId, double sum) {
         PreparedStatement preparedStatement = null;

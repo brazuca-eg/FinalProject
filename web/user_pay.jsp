@@ -9,6 +9,8 @@
 <body>
 <jsp:include page="header_client.jsp" />
 
+
+<h3>My balance: ${myBalance}</h3>
 <h3 align="center">${wait}</h3>
 <table border="1" align="center" >
     <tr>
@@ -43,6 +45,7 @@
 
 </table>
 
+${paid}
 
 
 <jsp:include page="footer.jsp" />

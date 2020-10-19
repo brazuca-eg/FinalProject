@@ -27,9 +27,10 @@ public class UserRequestsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
+        Balance balance = DAO.getInstance().checkCustomerBalance(user);
+        req.setAttribute("myBalance", balance.getBalance());
         requests = DAO.getInstance().getUserRequests(user.getId(), Status.WAIT.getId());
         req.setAttribute("waitingPaymentList", requests);
-
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/user_pay.jsp");
         requestDispatcher.forward(req, res);
@@ -41,19 +42,22 @@ public class UserRequestsServlet extends HttpServlet {
         User user = (User) session.getAttribute("current_user");
         if(req.getParameter("pay")!=null){
             int reqId = Integer.parseInt(req.getParameter("pay"));
-            Balance balance = DAO.getInstance().checkCustomerBalance(user);
-            double bal = balance.getBalance();
-            double pay = DAO.getInstance().getPriceOfRequest(reqId);
-            if(bal>pay){
-                DAO.getInstance().userPayRequest1(reqId, pay);
-                DAO.getInstance().userPayRequest2(reqId, Status.PAID_USER.getId());
-                DAO.getInstance().setSqlUserLowerBalance(user.getId(), pay);
-            }else{
-                return;
+            int statusId = DAO.getInstance().getStatusByRequestId(reqId);
+            if(statusId==Status.WAIT.getId()){
+                Balance balance = DAO.getInstance().checkCustomerBalance(user);
+                double bal = balance.getBalance();
+                double pay = DAO.getInstance().getPriceOfRequest(reqId);
+                if(bal>pay){
+                    DAO.getInstance().userPayRequest(pay, Status.PAID_USER.getId(), reqId);
+                    DAO.getInstance().setSqlUserLowerBalance(user.getId(), pay);
+                    req.setAttribute("paid", "Заказа номер "+ reqId +" успешно оплачен");
+                    doGet(req, res);
+                }else{
+                    req.setAttribute("error", "Недостаточно средств на балансе для оплаты");
+                    req.getRequestDispatcher("/error.jsp").forward(req, res);
+                }
             }
         }
-        doGet(req, res);
     }
-
 
 }
