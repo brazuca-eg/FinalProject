@@ -1,5 +1,4 @@
 package ua.kharkov.repairagency.servlet;
-import ua.kharkov.repairagency.LocaleManager;
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.User;
 import javax.servlet.ServletException;

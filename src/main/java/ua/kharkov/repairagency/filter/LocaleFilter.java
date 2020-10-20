@@ -93,10 +93,6 @@ public class LocaleFilter implements Filter {
 
 
 
-
-
-
-
         session.setAttribute("bundle", currentBundle);
 
         filterChain.doFilter(request, response);
