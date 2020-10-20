@@ -3,7 +3,10 @@
 <html>
 <head>
     <title>Manager confirm page</title>
-    <link rel="stylesheet" href="css/table.css">
+<%--    <link rel="stylesheet" href="css/table.css">--%>
+    <style>
+        <%@ include file="css/table.css"%>
+    </style>
 </head>
 <body>
 <jsp:include page="headers/header_manager.jsp" />

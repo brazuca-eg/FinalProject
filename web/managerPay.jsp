@@ -6,6 +6,9 @@
     <head>
         <title>Pay balance for clients</title>
         <link rel="stylesheet" href="css/managerPay.css">
+        <style>
+            <%@ include file="css/managerPay.css"%>
+        </style>
     </head>
 
     <body >

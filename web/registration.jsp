@@ -3,7 +3,10 @@
 <html>
 <head>
     <title>Registration</title>
-    <link rel="stylesheet" href="css/registration.css">
+<%--    <link rel="stylesheet" href="css/registration.css">--%>
+    <style>
+        <%@ include file="css/registration.css"%>
+    </style>
 </head>
 <body size="10" face="Arial" >
     <jsp:include page="header.jsp" />

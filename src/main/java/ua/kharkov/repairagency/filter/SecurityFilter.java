@@ -35,7 +35,7 @@ public class SecurityFilter implements Filter {
                     return;
                 }
             }else  if(user.getRole_id()==2){
-                if(!currentUrl.contains("main")  && !currentUrl.contains("masterRequests") && !currentUrl.contains("masterRequests")){
+                if(!currentUrl.contains("main")  && !currentUrl.contains("masterRequests") && !currentUrl.contains("master_archive")){
                     servletRequest.getRequestDispatcher(ERROR_403).forward(servletRequest, servletResponse);
                     return;
                 }

@@ -3,7 +3,10 @@
 <html>
 <head>
     <title>Master's archive requests</title>
-    <link rel="stylesheet" href="css/table.css">
+<%--    <link rel="stylesheet" href="css/table.css">--%>
+    <style>
+        <%@ include file="css/table.css"%>
+    </style>
 </head>
 <body>
 

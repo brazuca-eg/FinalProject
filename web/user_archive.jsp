@@ -3,7 +3,10 @@
 <html>
 <head>
     <title>Client's archive</title>
-    <link rel="stylesheet" href="css/table.css">
+<%--    <link rel="stylesheet" href="css/table.css">--%>
+    <style>
+        <%@ include file="css/table.css"%>
+    </style>
 </head>
 <body>
 <jsp:include page="header_client.jsp" />

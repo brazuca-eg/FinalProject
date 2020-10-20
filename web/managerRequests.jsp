@@ -5,8 +5,12 @@
 <html>
 <head>
     <title>See requests</title>
-    <link rel="stylesheet" href="css/managerReqs.css">
-    <link rel="stylesheet" href="css/table.css">
+<%--    <link rel="stylesheet" href="css/managerReqs.css">--%>
+<%--    <link rel="stylesheet" href="css/table.css">--%>
+    <style>
+        <%@ include file="css/table.css"%>
+        <%@ include file="css/managerReqs.css"%>
+    </style>
 
 </head>
 <body>

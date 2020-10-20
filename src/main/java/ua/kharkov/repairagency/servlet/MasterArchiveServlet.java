@@ -17,7 +17,7 @@ import java.util.List;
 @WebServlet("/master_archive")
 public class MasterArchiveServlet extends HttpServlet {
     List<RequestMaster> archive = null;
-    private final static String index = "/master_requests.jsp";
+    private final static String index = "/master_archive.jsp";
 
 
     @Override
@@ -33,7 +33,7 @@ public class MasterArchiveServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        //super.doPost(req, resp);
     }
 
     @Override

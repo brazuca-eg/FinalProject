@@ -4,7 +4,10 @@
 <html>
 <head>
     <title>My requests</title>
-    <link rel="stylesheet" href="css/userReqs.css">
+<%--    <link rel="stylesheet" href="css/userReqs.css">--%>
+    <style>
+        <%@ include file="css/userReqs.css"%>
+    </style>
 </head>
 <body>
 <jsp:include page="header_client.jsp" />

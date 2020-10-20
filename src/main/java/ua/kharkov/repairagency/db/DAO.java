@@ -1,5 +1,4 @@
 package ua.kharkov.repairagency.db;
-
 import ua.kharkov.repairagency.db.entity.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class DAO {
             "SELECT balance FROM details WHERE user_id=?";
 
     private static final String SQL_PAY_BALANCE_FOR_USER  =
-    "INSERT INTO details  (user_id, balance) VALUES (?, ?);";
+            "INSERT INTO details  (user_id, balance) VALUES (?, ?);";
 
 
 
@@ -42,21 +41,21 @@ public class DAO {
             "INSERT INTO request (user_id, master_id, name, description, date, status_id) values (?, 4, ?, ?, ?, 6)";
 
 
-private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
-        "SELECT * FROM request ORDER BY ";
+    private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
+            "SELECT * FROM request ORDER BY ";
 
     private static final String SQL_USER_REQUEST_LIST2  =
-    "SELECT request_id, date, status.name, user_id, master_id, request.name, description FROM repair.request INNER JOIN repair.status ON  request.status_id = status.status_id  WHERE user_id=? AND status_id=?";
+            "SELECT request_id, date, status.name, user_id, master_id, request.name, description FROM repair.request INNER JOIN repair.status ON  request.status_id = status.status_id  WHERE user_id=? AND status_id=?";
 
     private static final String SQL_STATUS_REQUEST  =
-    "SELECT status_id FROM  request WHERE request_id = ?";
+            "SELECT status_id FROM  request WHERE request_id = ?";
 
 
     private static final String SQL_MANAGER_REQUESTS  =
             "SELECT request.request_id, t2.login, date,  request.name, request.description , request.price, status.name, t1.name, t1.surname FROM request \n" +
-            "INNER JOIN status ON   request.status_id = status.status_id  \n" +
-            "INNER JOIN user t1 ON  request.master_id = t1.user_id\n" +
-            "INNER JOIN user t2 ON  request.user_id = t2.user_id ";
+                    "INNER JOIN status ON   request.status_id = status.status_id  \n" +
+                    "INNER JOIN user t1 ON  request.master_id = t1.user_id\n" +
+                    "INNER JOIN user t2 ON  request.user_id = t2.user_id ";
 
     private static final String SQL_MASTER_REQUESTS_PAID  =
             "SELECT request_id, t1.login, t1.name, t1.surname, date,  request.name, description , price, status.name FROM request \n" +
@@ -110,9 +109,9 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
 
 
     private static final String SQL_ABOUT_USER_AND_BALANCE =
-    "SELECT user.user_id, login, name, surname, role_id, email, details.balance FROM repair.user\n"+
-            "INNER JOIN repair.details ON details.user_id = user.user_id\n"+
-            "WHERE role_id=?";
+            "SELECT user.user_id, login, name, surname, role_id, email, details.balance FROM repair.user\n"+
+                    "INNER JOIN repair.details ON details.user_id = user.user_id\n"+
+                    "WHERE role_id=?";
 
 
     private static final String SQL_USER_REQUESTS_ARCHIVE =
@@ -1006,7 +1005,7 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             pstmt.setInt(1, request_id);
             resultSet = pstmt.executeQuery();
             if (resultSet.next())
-               res = resultSet.getInt("status_id");;
+                res = resultSet.getInt("status_id");;
             resultSet.close();
             pstmt.close();
         } catch (SQLException ex) {
@@ -1038,10 +1037,10 @@ private static final String SQL_MANAGER_REQUEST_LIST_SORTED  =
             resultSet.close();
             pstmt.close();
         } catch (SQLException ex) {
-           pool.getInstance().rollbackAndClose(con);
+            pool.getInstance().rollbackAndClose(con);
             ex.printStackTrace();
         } finally {
-           pool.getInstance().commitAndClose(con);
+            pool.getInstance().commitAndClose(con);
         }
         return users;
     }
