@@ -23,7 +23,6 @@
         <td>Описание заказа</td>
         <td>Цена</td>
         <td>Статус</td>
-        <td>Отзыв</td>
     </tr>
     <c:forEach items="${list}" var="element">
         <td>${element.id}</td>
@@ -37,7 +36,33 @@
         <td>${element.status_name}</td>
         </tr>
     </c:forEach>
+
 </table>
+
+    <h3 align="center" >Отзывы</h3>
+    <table align="center" class="table_blur">
+        <tr>
+            <td>Отзыв</td>
+            <td>Звезды</td>
+        </tr>
+        <tr>
+            <c:forEach items="${feedbacks}" var="element">
+                <c:choose>
+                    <c:when test="${element.stars==0}">
+                        <td><c:out value="Текст отзыва еще не поставлен"/></td>
+                        <td><c:out value="Звезды отзыва еще не поставлены"/></td>
+                    </c:when>
+                    <c:when test="${element.stars>0}">
+                        <td>${element.text}</td>
+                        <td>${element.stars}</td>
+                    </c:when>
+                </c:choose>
+        </tr>
+        </c:forEach>
+
+        </tr>
+    </table>
+
 <div align="center" >
     <form method="get">
         <c:forEach var="i" begin="1" end="${pages}" step="1" varStatus ="status">

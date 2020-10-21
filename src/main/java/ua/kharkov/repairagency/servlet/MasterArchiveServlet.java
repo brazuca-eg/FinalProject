@@ -24,34 +24,47 @@ public class MasterArchiveServlet extends HttpServlet {
     List<RequestMaster> currentPage = new ArrayList<>();
     private final static String index = "/master_archive.jsp";
     int divide = 2;
+    List<Feedback> currentFeedback = new ArrayList<>();
 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         currentPage =  new ArrayList<>();
+        currentFeedback = new ArrayList<>();
         HttpSession session = req.getSession();
         User user = (User)session.getAttribute("current_user");
         archive = DAO.getInstance().getMasterRequestsArchive(user.getId());
+
         int amount = archive.size();
         int pages = 1;
         if(amount%divide==0){
             pages = amount/divide;
         }else {
-            pages = amount/divide + 1;
+            pages = (amount/divide) + 1;
         }
         req.setAttribute("pages", pages);
         if(req.getParameter("numPage")==null){
             for (int i = 0; i < divide; i++) {
                 currentPage.add(archive.get(i));
+                int reqId = archive.get(i).getId();
+                Feedback feedback = DAO.getInstance().getMasterRequestFeedback(user.getId(), reqId);
+                currentFeedback.add(feedback);
             }
         }else{
             int n = Integer.parseInt(req.getParameter("numPage"));
-            System.out.println("the n is " + n);
-            for (int i = n*divide-divide; i < n*divide; i++) {
-                currentPage.add(archive.get(i));
+            n = n-1;
+            for (int i = n*divide; i < n*divide+2; i++) {
+                if(i<archive.size()){
+                    currentPage.add(archive.get(i));
+                    int reqId = archive.get(i).getId();
+                    Feedback feedback = DAO.getInstance().getMasterRequestFeedback(user.getId(), reqId);
+                    currentFeedback.add(feedback);
+                }
+
             }
         }
         req.setAttribute("list", currentPage);
+        req.setAttribute("feedbacks", currentFeedback);
 
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher(index);

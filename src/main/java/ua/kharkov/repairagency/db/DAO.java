@@ -71,6 +71,12 @@ public class DAO {
                     "INNER JOIN user t2 ON request.master_id = t2.user_id\n" +
                     "WHERE t2.user_id=? AND status.status_id = 5";
 
+    private static final String SQL_MASTER_REQUESTS_ARCHIVE_FEEDBACK = "SELECT  feedback.text, feedback.stars FROM repair.feedback\n"+
+            "Inner JOIN repair.request t1 ON feedback.request_id = t1.request_id\n"+
+            "INNER JOIN repair.user t2 ON t1.master_id = t2.user_id\n"+
+            "INNER JOIN repair.status ON t1.status_id = status.status_id \n"+
+            "WHERE t2.user_id=? AND status.status_id = 5 AND t1.request_id = ?;";
+
 
     private static final String SQL_USER_REQUESTS  =
             "SELECT request_id, t2.login, t2.name, t2.surname, date,  request.name, description , price, status.name FROM repair.request\n" +
@@ -146,6 +152,33 @@ public class DAO {
             dao = new DAO();
         }
         return dao;
+    }
+
+    public Feedback getMasterRequestFeedback(int masterId,int reqId) {
+        Feedback feedback = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            pstmt = con.prepareStatement(SQL_MASTER_REQUESTS_ARCHIVE_FEEDBACK);
+            pstmt.setInt(1, masterId);
+            pstmt.setInt(2, reqId);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+                feedback = new Feedback();
+                feedback.setText(rs.getString("text"));
+                feedback.setStars(rs.getInt("stars"));
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return feedback;
     }
 
 
