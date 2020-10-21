@@ -773,7 +773,7 @@ public class DAO {
         Connection con = null;
         List<RequestSQL> requestsSQL = new ArrayList<>();
         try {
-            con = DAO.getConnectionWithDriverManager();
+            con = pool.getConnection();
             statement = con.createStatement();
             rs = statement.executeQuery(SQL_MANAGER_REQUESTS);
             while (rs.next()){
@@ -806,7 +806,7 @@ public class DAO {
         Connection con = null;
         List<RequestSQL> requestsSQL = new ArrayList<>();
         try {
-            con = DAO.getConnectionWithDriverManager();
+            con = pool.getConnection();
             statement = con.createStatement();
             rs = statement.executeQuery(SQL_MANAGER_REQUESTS + " ORDER BY " + param);
             while (rs.next()){
@@ -839,7 +839,7 @@ public class DAO {
         Connection con = null;
         List<RequestSQL> requestsSQL = new ArrayList<>();
         try {
-            con = DAO.getConnectionWithDriverManager();
+            con = pool.getConnection();
             statement = con.createStatement();
             rs = statement.executeQuery(SQL_MANAGER_REQUESTS +  "WHERE status.status_id=" + id);
             while (rs.next()){
@@ -872,7 +872,7 @@ public class DAO {
         Connection con = null;
         List<RequestSQL> requestsSQL = new ArrayList<>();
         try {
-            con = DAO.getConnectionWithDriverManager();
+            con = pool.getConnection();
             statement = con.createStatement();
             rs = statement.executeQuery(SQL_MANAGER_REQUESTS +  "WHERE t1.user_id=" + id);
             while (rs.next()){
@@ -1181,36 +1181,5 @@ public class DAO {
         return connection;
     }
 
-    public static void main(String[] args) {
-        Statement statement = null;
-        ResultSet rs = null;
-        Connection con = null;
-        List<RequestSQL> requestsSQL = new ArrayList<>();
-        try {
-            con = DAO.getConnectionWithDriverManager();
-            statement = con.createStatement();
-            rs = statement.executeQuery(SQL_MANAGER_REQUESTS);
-            while (rs.next()){
-                RequestSQL request = new RequestSQL();
-                request.setId(rs.getInt("request_id"));
-                request.setUserlogin(rs.getString("login"));
-                request.setDate(rs.getDate(Fields.REQUEST_DATE));
-                request.setName(rs.getString(Fields.REQUEST_NAME));
-                request.setDescription(rs.getString(Fields.REQUEST_DESCRIPTION));
-                request.setPrice(rs.getDouble(Fields.REQUEST_PRICE));
-                request.setStatus_name(rs.getString("status.name"));
-                request.setMaster_name(rs.getString("t1.name"));
-                request.setMaster_surname(rs.getString("t1.surname"));
-                requestsSQL.add(request);
-            }
-            rs.close();
-            statement.close();
-        } catch (SQLException ex) {
-            pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
-        } finally {
-            pool.getInstance().commitAndClose(con);
-        }
-        System.out.println(requestsSQL);
-    }
+
 }

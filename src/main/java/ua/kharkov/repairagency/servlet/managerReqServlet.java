@@ -20,13 +20,13 @@ public class managerReqServlet extends HttpServlet {
     List< String> errors= new ArrayList<>();
     @Override
     public void init() throws ServletException {
-        requests = DAO.getInstance().getManagerRequests();
-        masters = DAO.getInstance().findClients(2);
         statuses = DAO.getInstance().getStatuses();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        requests = DAO.getInstance().getManagerRequests();
+        masters = DAO.getInstance().findClients(2);
         req.setAttribute("masters", masters);
         req.setAttribute("statuses", statuses);
         String value_of_sort = req.getParameter("select_sort");
