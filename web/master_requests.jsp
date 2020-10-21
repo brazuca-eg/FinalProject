@@ -1,10 +1,8 @@
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Current master's requests</title>
-<%--    <link rel="stylesheet" href="css/table.css">--%>
     <style>
         <%@ include file="css/table.css"%>
     </style>
@@ -57,7 +55,6 @@
 
 </table>
 
-<%--<a href="${link}">${archive}</a>--%>
 
 <jsp:include page="footer.jsp" />
 

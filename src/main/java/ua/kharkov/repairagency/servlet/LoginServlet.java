@@ -14,11 +14,6 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
 	@Override
-	public void init() throws ServletException {
-
-	}
-
-	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		User user = null;
 		String path = req.getContextPath();
@@ -55,9 +50,6 @@ public class LoginServlet extends HttpServlet {
 			req.getRequestDispatcher("/login.jsp").forward(req, res);
 		}
 
-
-
-
 	}
 
 
@@ -74,7 +66,6 @@ public class LoginServlet extends HttpServlet {
 			req.getRequestDispatcher("/login.jsp").forward(req, resp);
 		}
 	}
-
 
 }
 

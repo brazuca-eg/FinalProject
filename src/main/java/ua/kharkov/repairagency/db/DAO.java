@@ -1,5 +1,7 @@
 package ua.kharkov.repairagency.db;
 import ua.kharkov.repairagency.db.entity.*;
+import ua.kharkov.repairagency.exception.DataBaseException;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,6 +146,11 @@ public class DAO {
 
     private static final String SQL_DEFAULT_CLIENT_BALANCE = "INSERT INTO repair.details (user_id, balance) VALUES (?,0);";
 
+    private static final String DB_ERROR = "Errors with db";
+
+
+    //static Logger LOGGER = Logger.getLogger(DAO.class.getName());
+
     private DAO(){
 
     }
@@ -174,7 +181,6 @@ public class DAO {
             pstmt.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -193,7 +199,7 @@ public class DAO {
             preparedStatement.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -218,7 +224,7 @@ public class DAO {
             pstmt.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -238,7 +244,7 @@ public class DAO {
             preparedStatement.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -264,7 +270,7 @@ public class DAO {
             pstmt.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -283,7 +289,7 @@ public class DAO {
             preparedStatement.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -307,7 +313,7 @@ public class DAO {
             preparedStatement.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -325,7 +331,7 @@ public class DAO {
             preparedStatement.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -343,9 +349,10 @@ public class DAO {
             preparedStatement.setInt(3, reqId);
             preparedStatement.executeUpdate();
             preparedStatement.close();
+
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -380,7 +387,7 @@ public class DAO {
             pstmt.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -404,7 +411,7 @@ public class DAO {
             pstmt.close();
         } catch (SQLException ex) {
             pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
+            throw new DataBaseException(DB_ERROR);
         } finally {
             pool.getInstance().commitAndClose(con);
         }
@@ -1206,10 +1213,4 @@ public class DAO {
         }
         System.out.println(requestsSQL);
     }
-
-
-
-
-
-
 }

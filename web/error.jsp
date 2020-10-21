@@ -13,7 +13,7 @@
 <h3 align="center">${error}</h3>
 
 
-<button ><a href="${path}">Назад</a></button>
+<%--<button ><a href="${path}">Назад</a></button>--%>
 <jsp:include page="footer.jsp" />
 </body>
 </html>

@@ -1,9 +1,8 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Registration</title>
-<%--    <link rel="stylesheet" href="css/registration.css">--%>
+
     <style>
         <%@ include file="css/registration.css"%>
     </style>

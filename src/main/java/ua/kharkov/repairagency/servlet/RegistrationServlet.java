@@ -2,7 +2,6 @@ package ua.kharkov.repairagency.servlet;
 
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.User;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +16,7 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        req.setAttribute("path" , req.getContextPath() );
         String loginField = req.getParameter("login");
         String nameField = req.getParameter("name");
         String emailField = req.getParameter("email");

@@ -3,7 +3,6 @@
 <html>
 <head>
     <title>Manager confirm page</title>
-<%--    <link rel="stylesheet" href="css/table.css">--%>
     <style>
         <%@ include file="css/table.css"%>
     </style>

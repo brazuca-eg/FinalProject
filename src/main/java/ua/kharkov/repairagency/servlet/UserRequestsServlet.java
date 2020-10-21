@@ -2,7 +2,6 @@ package ua.kharkov.repairagency.servlet;
 
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.*;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,12 +15,7 @@ import java.util.List;
 
 @WebServlet("/myRequests")
 public class UserRequestsServlet extends HttpServlet {
-
     List<RequestUser> requests = new ArrayList<>();
-    @Override
-    public void init() throws ServletException {
-
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -40,6 +34,7 @@ public class UserRequestsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
+        req.setAttribute("path" , req.getContextPath());
         if(req.getParameter("pay")!=null){
             int reqId = Integer.parseInt(req.getParameter("pay"));
             int statusId = DAO.getInstance().getStatusByRequestId(reqId);

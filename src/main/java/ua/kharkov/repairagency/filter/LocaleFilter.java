@@ -1,7 +1,6 @@
 package ua.kharkov.repairagency.filter;
 
 import ua.kharkov.repairagency.LocaleManager;
-
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -86,11 +85,6 @@ public class LocaleFilter implements Filter {
         req.setAttribute("finish", currentBundle.getString("master.reqs_finish_work"));
         req.setAttribute("current", currentBundle.getString("master.reqs_current_requests"));
         req.setAttribute("archive", currentBundle.getString("master.reqs_archive"));
-
-
-
-
-
 
 
         session.setAttribute("bundle", currentBundle);

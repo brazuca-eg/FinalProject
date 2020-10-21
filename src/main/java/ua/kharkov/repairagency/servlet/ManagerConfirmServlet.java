@@ -18,6 +18,7 @@ public class ManagerConfirmServlet extends HttpServlet {
     List<RequestSQL> requests = new ArrayList<>();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        req.setAttribute("path" , req.getContextPath());
         requests = DAO.getInstance().getManagerRequestsFilterStatus(Status.PAID_USER.getId());
         req.setAttribute("requests", requests);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/manager_confirm.jsp");
@@ -40,7 +41,6 @@ public class ManagerConfirmServlet extends HttpServlet {
             }
         }
         doGet(req, res);
-
     }
 
 

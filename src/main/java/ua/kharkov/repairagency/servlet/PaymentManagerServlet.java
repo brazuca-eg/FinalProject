@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -30,6 +28,7 @@ public class PaymentManagerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        req.setAttribute("path" , req.getContextPath());
         list = DAO.getInstance(). findClientsAndBalance(3);
         req.setAttribute("clients", list);
         if(req.getParameter("ident")!=null){

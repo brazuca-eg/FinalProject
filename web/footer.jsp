@@ -1,6 +1,4 @@
-
 <head>
-<%--    <link rel="stylesheet" href="css/footer.css">--%>
     <style>
         <%@ include file="css/footer.css"%>
     </style>

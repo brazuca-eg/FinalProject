@@ -1,14 +1,12 @@
-<%@ page import="java.io.PrintWriter" %>
-<%@ page import="ua.kharkov.repairagency.db.entity.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>UserFirst</title>
+    <title>Welcome client</title>
 </head>
 <body>
-
-
     <jsp:include page="header_client.jsp" />
+
+
     <h3>Мой профиль</h3>
     <p>Логин: ${found.login}</p>
     <p>Почта: ${found.email}</p>
@@ -18,15 +16,6 @@
     <br>${first}
 
 
-
-    <form  method="post">
-        <input type="submit" value="Logout">
-    </form>
-
-
-
-
     <jsp:include page="footer.jsp" />
-
 </body>
 </html>

@@ -2,7 +2,6 @@ package ua.kharkov.repairagency.servlet;
 
 import ua.kharkov.repairagency.db.DAO;
 import ua.kharkov.repairagency.db.entity.*;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +29,6 @@ public class managerReqServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         req.setAttribute("masters", masters);
         req.setAttribute("statuses", statuses);
-
         String value_of_sort = req.getParameter("select_sort");
         String filter1 = req.getParameter("filter_status1");
         String filter2 = req.getParameter("filter_status2");
@@ -57,6 +55,7 @@ public class managerReqServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        req.setAttribute("path" , req.getContextPath() );
         if(req.getParameter("ident")!=null && req.getParameter("price")!=null){
             int request_id = Integer.parseInt(req.getParameter("ident"));
             double price = Double.parseDouble(req.getParameter("price"));
@@ -80,9 +79,6 @@ public class managerReqServlet extends HttpServlet {
             req.setAttribute("error", "Необходимо заполнить все поля");
             req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
-        //int status_id = DAO.getInstance().statusOfRequest(request_id);
-
-
 
     }
 

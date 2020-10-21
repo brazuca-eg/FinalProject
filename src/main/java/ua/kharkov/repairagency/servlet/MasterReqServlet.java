@@ -31,9 +31,6 @@ public class MasterReqServlet extends HttpServlet {
         req.setAttribute("status_work", Status.WORK.getName());
         req.setAttribute("status_finish", Status.END.getName());
 
-
-//        req.setAttribute("link",req.getContextPath() + "/master_archive");
-
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
         if(user!=null){
@@ -50,15 +47,10 @@ public class MasterReqServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         if(req.getParameter("start")!=null){
             int req_id = Integer.parseInt(req.getParameter("start"));
-            //int statusId = DAO.getInstance().getStatusByRequestId(req_id);
-           // statusId += 2;
             DAO.getInstance().updateStatusByMaster(Status.WORK.getId(), req_id);
-
         }else{
             if(req.getParameter("finish")!=null){
                 int req_id = Integer.parseInt(req.getParameter("finish"));
-//                int statusId = DAO.getInstance().getStatusByRequestId(req_id);
-//                statusId++;
                 DAO.getInstance().updateStatusByMaster(Status.END.getId(), req_id);
             }
         }

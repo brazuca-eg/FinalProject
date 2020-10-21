@@ -4,7 +4,6 @@
 <html>
 <head>
     <title>My requests</title>
-<%--    <link rel="stylesheet" href="css/userReqs.css">--%>
     <style>
         <%@ include file="css/userReqs.css"%>
     </style>

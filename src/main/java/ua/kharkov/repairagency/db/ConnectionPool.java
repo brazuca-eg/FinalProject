@@ -27,11 +27,9 @@ public class ConnectionPool {
             DataSource dataSource = (DataSource)context.lookup("java:comp/env/jdbc/pool");
             connection = dataSource.getConnection();
         } catch (NamingException  e) {
-            //e.printStackTrace();
             System.out.println("NamingException in pool ");
             e.printStackTrace();
         } catch (SQLException e) {
-            //e.printStackTrace();
             System.out.println("SQLException  in pool");
             e.printStackTrace();
         }

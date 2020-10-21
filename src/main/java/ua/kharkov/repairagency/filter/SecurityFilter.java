@@ -30,18 +30,18 @@ public class SecurityFilter implements Filter {
         }else {
             if(user.getRole_id()==1){
                 if(!currentUrl.contains("main")  && !currentUrl.contains("manager_profile") && !currentUrl.contains("find")
-                        && !currentUrl.contains("seeRequests") && !currentUrl.contains("confirm_manager") && !currentUrl.contains("confirm_manager")){
+                        && !currentUrl.contains("seeRequests") && !currentUrl.contains("confirm_manager")  && !currentUrl.contains("logout")){
                     servletRequest.getRequestDispatcher(ERROR_403).forward(servletRequest, servletResponse);
                     return;
                 }
             }else  if(user.getRole_id()==2){
-                if(!currentUrl.contains("main")  && !currentUrl.contains("masterRequests") && !currentUrl.contains("master_archive")){
+                if(!currentUrl.contains("main")  && !currentUrl.contains("masterRequests") && !currentUrl.contains("master_archive") && !currentUrl.contains("logout")){
                     servletRequest.getRequestDispatcher(ERROR_403).forward(servletRequest, servletResponse);
                     return;
                 }
             }else  if(user.getRole_id()==3){
                 if(!currentUrl.contains("main")  && !currentUrl.contains("masterRequests") && !currentUrl.contains("clientWelcome")
-                        && !currentUrl.contains("request") && !currentUrl.contains("myRequests") && !currentUrl.contains("allUserRequests") && !currentUrl.contains("userArchive")){
+                        && !currentUrl.contains("request") && !currentUrl.contains("myRequests") && !currentUrl.contains("allUserRequests") && !currentUrl.contains("userArchive") && !currentUrl.contains("logout")){
                     servletRequest.getRequestDispatcher(ERROR_403).forward(servletRequest, servletResponse);
                     return;
                 }

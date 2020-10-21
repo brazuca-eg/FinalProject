@@ -32,30 +32,24 @@ public class UserArchiveServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-//        HttpSession session = req.getSession();
-//        User user = (User)session.getAttribute("current_user");
+        req.setAttribute("path" , req.getContextPath() );
         if(Integer.parseInt(req.getParameter("ident"))>0 && req.getParameter("textb")!="" && Integer.parseInt(req.getParameter("answer"))>0 ){
+            boolean b = false;
             for (Map.Entry<RequestMaster, Feedback> entry : archive.entrySet()) {
                 int reqId = entry.getKey().getId();
                 if(reqId == Integer.parseInt(req.getParameter("ident"))){
-                    try{
-                        Feedback feedback = new Feedback();
-                        feedback.setText(req.getParameter("textb"));
-                        feedback.setStars(Integer.parseInt(req.getParameter("answer")));
-                        DAO.getInstance().userArchiveFeedback(feedback, Integer.parseInt(req.getParameter("ident")));
-                        doGet(req,res);
-                    }catch (DataBaseException ex){
-                        ex.setMessage("Проблемы с БД");
-                        req.setAttribute("error", ex);
-                        req.getRequestDispatcher("/error.jsp").forward(req, res);
-                    }
-                }else{
-                    DataBaseException ex = new DataBaseException("Такого идентификатора нету в вашем аррхиве ");
-                    req.setAttribute("error", ex);
-                    req.getRequestDispatcher("/error.jsp").forward(req, res);
+                    b = true;
+                    Feedback feedback = new Feedback();
+                    feedback.setText(req.getParameter("textb"));
+                    feedback.setStars(Integer.parseInt(req.getParameter("answer")));
+                    DAO.getInstance().userArchiveFeedback(feedback, Integer.parseInt(req.getParameter("ident")));
+                    doGet(req,res);
                 }
             }
-
+            if(b == false){
+                req.setAttribute("error", "Такого идентификатора нету в вашем архиве ");
+                req.getRequestDispatcher("/error.jsp").forward(req, res);
+            }
         }else{
             DataBaseException ex = new DataBaseException("Заполните все поля ");
             req.setAttribute("error", ex);

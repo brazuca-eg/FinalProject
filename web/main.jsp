@@ -22,12 +22,8 @@
 </c:choose>
 <h3 align="center">Сайт ремонтного агентства</h3><br>
 <p align="center">
-    <img src="https://lh3.googleusercontent.com/proxy/Qi2tPIgcnpUpRGKHVjlDv2QQZZUf3hLjrXeH-D-UM1sLfbbOaJ1hKlSGlGMJdE2dalFxqT6Oi7WwZYl81MC-yIwYkl6w56VeEDUQRCTbxqvEjuVFsJ_FGX2hCzmi7vCsAuIi_kFizV1k" />
+    <img src="https://1000remontov.ru/wp-content/uploads/2018/04/3-1.jpg" />
 </p>
-
-
-
-
 
 
 

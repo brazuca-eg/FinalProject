@@ -1,7 +1,5 @@
-
 <meta http-equiv="content-type" content="text/html; charset=cp1251">
 <head>
-<%--    <link rel="stylesheet" href="../css/header.css">--%>
     <style>
         <%@ include file="css/header.css"%>
     </style>

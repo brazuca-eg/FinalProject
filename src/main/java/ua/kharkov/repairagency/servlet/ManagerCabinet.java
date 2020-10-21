@@ -1,8 +1,6 @@
 package ua.kharkov.repairagency.servlet;
 
-
 import ua.kharkov.repairagency.db.entity.User;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,9 +20,5 @@ public class ManagerCabinet extends HttpServlet {
         req.setAttribute("found", user);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/manager_cabinet.jsp");
         requestDispatcher.forward(req, res);
-    }
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-
     }
 }

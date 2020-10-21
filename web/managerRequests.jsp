@@ -1,12 +1,9 @@
-<%@ page import="ua.kharkov.repairagency.db.entity.User" %>
-<%@ page import="ua.kharkov.repairagency.db.DAO" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>See requests</title>
-<%--    <link rel="stylesheet" href="css/managerReqs.css">--%>
-<%--    <link rel="stylesheet" href="css/table.css">--%>
+
     <style>
         <%@ include file="css/table.css"%>
         <%@ include file="css/managerReqs.css"%>
