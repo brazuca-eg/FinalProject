@@ -40,12 +40,15 @@ public class MasterArchiveServlet extends HttpServlet {
             pages = (amount/divide) + 1;
         }
         req.setAttribute("pages", pages);
+        req.setAttribute("amount", amount);
         if(req.getParameter("numPage")==null){
             for (int i = 0; i < divide; i++) {
-                currentPage.add(archive.get(i));
-                int reqId = archive.get(i).getId();
-                Feedback feedback = DAO.getInstance().getMasterRequestFeedback(user.getId(), reqId);
-                currentFeedback.add(feedback);
+                if(i<archive.size()){
+                    currentPage.add(archive.get(i));
+                    int reqId = archive.get(i).getId();
+                    Feedback feedback = DAO.getInstance().getMasterRequestFeedback(user.getId(), reqId);
+                    currentFeedback.add(feedback);
+                }
             }
         }else{
             int n = Integer.parseInt(req.getParameter("numPage"));

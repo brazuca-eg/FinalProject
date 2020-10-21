@@ -23,11 +23,12 @@ public class PaymentManagerServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.list = DAO.getInstance(). findClientsAndBalance(3);
+        this.list = DAO.getInstance().findClientsAndBalance(3);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        list = DAO.getInstance().findClientsAndBalance(3);
         req.setAttribute("path" , req.getContextPath());
         list = DAO.getInstance(). findClientsAndBalance(3);
         req.setAttribute("clients", list);

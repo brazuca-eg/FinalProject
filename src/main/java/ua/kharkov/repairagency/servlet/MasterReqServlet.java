@@ -19,12 +19,7 @@ import java.util.List;
 public class MasterReqServlet extends HttpServlet {
     List<RequestMaster> requestMasters = null;
     private final static String index = "/master_requests.jsp";
-
-
-    @Override
-    public void init() throws ServletException {
-    }
-
+    
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         req.setAttribute("status_paid", Status.PAID.getName());
@@ -34,7 +29,7 @@ public class MasterReqServlet extends HttpServlet {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("current_user");
         if(user!=null){
-            requestMasters = DAO.getInstance().getMasterRequests(user.getRole_id());
+            requestMasters = DAO.getInstance().getMasterRequests(user.getId());
         }
         req.setAttribute("masterList", requestMasters);
 

@@ -27,7 +27,6 @@ public class RegistrationServlet extends HttpServlet {
         if(loginField == "" || passwordField == "" || passwordField2  == "" || surnameField == "" || emailField==""  || role_id  < 0  || role_id  > 3 ){
             req.setAttribute("error", "Все поля должны быть заполнены");
             req.getRequestDispatcher("/error.jsp").forward(req, res);
-
         }else if(!passwordField.equals(passwordField2)){
             req.setAttribute("error", "Пароли должны быть одинаковыми");
             req.getRequestDispatcher("/error.jsp").forward(req, res);
