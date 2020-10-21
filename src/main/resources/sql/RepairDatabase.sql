@@ -1,12 +1,8 @@
--- MySQL Workbench Forward Engineering
+
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-
--- -----------------------------------------------------
--- Schema repair
--- -----------------------------------------------------
 
 -- -----------------------------------------------------
 -- Schema repair
@@ -22,7 +18,6 @@ CREATE TABLE IF NOT EXISTS `repair`.`Role` (
   `name` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`role_id`))
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `repair`.`User`
@@ -70,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `repair`.`Status` (
   PRIMARY KEY (`status_id`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `repair`.`Request`
 -- -----------------------------------------------------
@@ -83,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `repair`.`Request` (
   `master_id` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `description` VARCHAR(300) NOT NULL,
+  `payment` DOUBLE NULL DEFAULT NULL,
   PRIMARY KEY (`request_id`, `status_id`, `user_id`, `master_id`),
   INDEX `status_id` (`status_id` ASC) VISIBLE,
   INDEX `fk_Request_User1_idx` (`user_id` ASC) VISIBLE,
