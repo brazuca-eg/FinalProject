@@ -136,7 +136,7 @@ public class DAO {
 
     private static final String SQL_CHECK_USERS_EXISTING_REQUEST = "SELECT user_id FROM repair.request WHERE request_id = ?";
 
-
+    private static final String SQL_DEFAULT_CLIENT_BALANCE = "INSERT INTO repair.details (user_id, balance) VALUES (?,0);";
 
     private DAO(){
 
@@ -147,6 +147,25 @@ public class DAO {
         }
         return dao;
     }
+
+
+    public void userDefaultDetails(int userId) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_DEFAULT_CLIENT_BALANCE);
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
 
 
     public int checkUserExistingRequest(int reqId) {
@@ -606,9 +625,9 @@ public class DAO {
     public void register(String email, String login, String password, String name, String surname, int role_id) {
         PreparedStatement preparedStatement = null;
         Connection con = null;
+        int userRole = 0;
         try {
             con = pool.getConnection();
-            DAO.UserMapper mapper = new DAO.UserMapper();
             preparedStatement = con.prepareStatement(SQL_REGISTER_USER);
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, login);

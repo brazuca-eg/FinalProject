@@ -34,14 +34,20 @@ public class PaymentManagerServlet extends HttpServlet {
         req.setAttribute("clients", list);
         if(req.getParameter("ident")!=null){
             User user = DAO.getInstance().findUserId(Integer.parseInt(req.getParameter("ident")));
-            if(user.getRole_id()==3){
-                this.user = DAO.getInstance().findUserId(Integer.parseInt(req.getParameter("ident")));
-                req.setAttribute("found", user);
-                if(DAO.getInstance().checkCustomerBalance(this.user)!=null){
-                    this.balance = DAO.getInstance().checkCustomerBalance(this.user);
-                    req.setAttribute("balance", balance);
+            if(user == null){
+                req.setAttribute("error", "Такой идентификатора пользователя не найдено");
+                req.getRequestDispatcher("/error.jsp").forward(req, res);
+            }else{
+                if(user.getRole_id()==3){
+                    this.user = DAO.getInstance().findUserId(Integer.parseInt(req.getParameter("ident")));
+                    req.setAttribute("found", user);
+                    if(DAO.getInstance().checkCustomerBalance(this.user)!=null){
+                        this.balance = DAO.getInstance().checkCustomerBalance(this.user);
+                        req.setAttribute("balance", balance);
+                    }
                 }
             }
+
         }
         RequestDispatcher requestDispatcher = req.getRequestDispatcher(index);
         requestDispatcher.forward(req, res);
@@ -51,6 +57,10 @@ public class PaymentManagerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         if(user!=null && Integer.parseInt(req.getParameter("summa")) > 0){
             DAO.getInstance().updateBalance(user, Integer.parseInt(req.getParameter("summa")));
+            req.setAttribute("paidSucc", "Балнас пользователя с id: " + user.getId() + " успешно пополнен на " + Integer.parseInt(req.getParameter("summa")));
+        }else{
+            req.setAttribute("error", "Сумма должна быть больше 0");
+            req.getRequestDispatcher("/error.jsp").forward(req, res);
         }
        doGet(req,res);
     }

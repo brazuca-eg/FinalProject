@@ -3,14 +3,12 @@
 <html>
 <head>
     <title>Master's archive requests</title>
-<%--    <link rel="stylesheet" href="css/table.css">--%>
+    <%--    <link rel="stylesheet" href="css/table.css">--%>
     <style>
         <%@ include file="css/table.css"%>
     </style>
 </head>
 <body>
-
-
 <jsp:include page="headers/header_master.jsp" />
 <br>
 <h3 align="center">Архив работ</h3>
@@ -27,7 +25,7 @@
         <td>Статус</td>
         <td>Отзыв</td>
     </tr>
-    <c:forEach items="${archiveList}" var="element">
+    <c:forEach items="${list}" var="element">
         <td>${element.id}</td>
         <td>${element.client_login}</td>
         <td>${element.client_name}</td>
@@ -39,10 +37,14 @@
         <td>${element.status_name}</td>
         </tr>
     </c:forEach>
-
 </table>
-
-
+<div align="center" >
+    <form method="get">
+        <c:forEach var="i" begin="1" end="${pages}" step="1" varStatus ="status">
+            <div><input name = "numPage" value="${i}" type="submit"></div>
+        </c:forEach>
+    </form>
+</div>
 
 <jsp:include page="footer.jsp" />
 </body>

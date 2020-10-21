@@ -94,6 +94,7 @@
         </c:forEach>
     </table>
 
+
     <hr align="center" width="100%" color="Red" /><br>
 
     <div style="width: 100%" align="center">

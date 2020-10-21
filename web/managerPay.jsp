@@ -75,6 +75,8 @@
 
         </table>
 
+        <h3 align="center">${paidSucc}</h3>
+
 
 
         <jsp:include page="footer.jsp" />
