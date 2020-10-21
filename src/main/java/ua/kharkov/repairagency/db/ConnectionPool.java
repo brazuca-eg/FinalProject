@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-
 public class ConnectionPool {
     private static ConnectionPool connectionPool;
     private ConnectionPool(){
@@ -27,10 +26,8 @@ public class ConnectionPool {
             DataSource dataSource = (DataSource)context.lookup("java:comp/env/jdbc/pool");
             connection = dataSource.getConnection();
         } catch (NamingException  e) {
-            System.out.println("NamingException in pool ");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.out.println("SQLException  in pool");
             e.printStackTrace();
         }
         return connection;

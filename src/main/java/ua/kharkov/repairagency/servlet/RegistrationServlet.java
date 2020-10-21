@@ -9,9 +9,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebServlet("/register")
 public class RegistrationServlet extends HttpServlet {
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
+                    "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
 
     @Override
@@ -34,12 +41,23 @@ public class RegistrationServlet extends HttpServlet {
         else{
             int userId = DAO.getInstance().checkExstingUser(loginField, emailField);
             if(userId == 0){
-                DAO.getInstance().register(emailField, loginField, passwordField , nameField, surnameField, role_id );
-                User user = DAO.getInstance().login(loginField, passwordField);
-                if(role_id == 3){
-                    DAO.getInstance().userDefaultDetails(user.getId());
+                int counter = 0;
+                Matcher matcher = pattern.matcher(emailField);
+                while (matcher.find()){
+                    counter++;
                 }
-                res.sendRedirect( req.getContextPath() +"/login");
+                if(counter==0){
+                    req.setAttribute("error", "Неправильный формат email");
+                    req.getRequestDispatcher("/error.jsp").forward(req, res);
+                }else{
+                    DAO.getInstance().register(emailField, loginField, passwordField , nameField, surnameField, role_id );
+                    User user = DAO.getInstance().login(loginField, passwordField);
+                    if(role_id == 3){
+                        DAO.getInstance().userDefaultDetails(user.getId());
+                    }
+                    res.sendRedirect( req.getContextPath() +"/login");
+                }
+
             }else{
                 req.setAttribute("error", "Такой пользователь уже зарегестрирован");
                 req.getRequestDispatcher("/error.jsp").forward(req, res);
