@@ -25,18 +25,21 @@ public class LoginServlet extends HttpServlet {
 			if (loginField != "" && passwordField != "") {
 				user = DAO.getInstance().login(loginField, passwordField);
 				if (user != null) {
-					session.setAttribute("role", user.getRole_id());
-					session.setAttribute("current_user", user);
-					if (user.getRole_id() == 1) {
-						String path1 = req.getContextPath() + "/manager_profile";
-						res.sendRedirect(path1);
-					} else if (user.getRole_id() == 3) {
-						String path2 = req.getContextPath() + "/clientWelcome";
-						res.sendRedirect(path2);
-					} else if (user.getRole_id() == 2) {
-						String path3 = req.getContextPath() + "/masterRequests";
-						res.sendRedirect(path3);
-					}
+						session.setAttribute("role", user.getRole_id());
+						session.setAttribute("current_user", user);
+						if (user.getRole_id() == 1) {
+							String path1 = req.getContextPath() + "/manager_profile";
+							res.sendRedirect(path1);
+						} else if (DAO.getInstance().getUserStatus(user.getId()).equals("banned") && user.getRole_id() == 3) {
+							req.setAttribute("error", "Вы забанены");
+							req.getRequestDispatcher("/error.jsp").forward(req, res);
+						} else if(!DAO.getInstance().getUserStatus(user.getId()).equals("banned") && user.getRole_id() == 3){
+							String path2 = req.getContextPath() + "/clientWelcome";
+							res.sendRedirect(path2);
+						} else if (user.getRole_id() == 2) {
+							String path3 = req.getContextPath() + "/masterRequests";
+							res.sendRedirect(path3);
+						}
 				} else if (user == null) {
 					req.setAttribute("error", "Такого пользователя нету в базе");
 					req.getRequestDispatcher("/error.jsp").forward(req, res);

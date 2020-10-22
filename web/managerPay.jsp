@@ -1,3 +1,4 @@
+<%@ page import="ua.kharkov.repairagency.db.DAO" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -59,6 +60,8 @@
                 <td>Фамилия пользователя</td>
                 <td>Email</td>
                 <td>Баланс</td>
+                <td>Забанить пользователя с идентификатором</td>
+<%--                <td>Разбанить пользователя с идентификатором</td>--%>
             </tr>
 
             <c:forEach var="entry" items="${clients}">
@@ -69,14 +72,38 @@
                     <td>${entry.value.surname}</td>
                     <td>${entry.value.email}</td>
                     <td>${entry.key.balance}</td>
+                    <td>
+                        <form method="post">
+                            <input  type="submit" name="ban" value="${entry.value.id}"/>
+                        </form>
+                    </td>
+<%--                    <td>--%>
+<%--                        <form method="post">--%>
+<%--                            <input  type="submit" name="unban" value="${entry.value.id}"/>--%>
+<%--                        </form>--%>
+<%--                    </td>--%>
                 </tr>
             </c:forEach>
 
 
         </table>
 
+        <table border="1" align="center" >
+            <tr >
+                <td>Статус пользователя</td>
+            </tr>
+            <c:forEach items="${usSt}" var="element">
+                <tr>
+                    <td>${element}</td>
+                </tr>
+            </c:forEach>
+
+        </table>
+
         <h3 align="center">${paidSucc}</h3>
 
+
+        ${bannedS}
 
 
         <jsp:include page="footer.jsp" />

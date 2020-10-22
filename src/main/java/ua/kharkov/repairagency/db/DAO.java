@@ -146,6 +146,14 @@ public class DAO {
 
     private static final String SQL_DEFAULT_CLIENT_BALANCE = "INSERT INTO repair.details (user_id, balance) VALUES (?,0);";
 
+
+    private static final String SQL_BAN_USER_STATUS = "UPDATE repair.user SET user_status = ? WHERE user_id = ?;";
+
+
+    private static final String SQL_GET_USER_STATUS = "SELECT user_status FROM repair.user WHERE user_id = ?";
+
+
+
     private static final String DB_ERROR = "Errors with db";
 
 
@@ -160,6 +168,84 @@ public class DAO {
         }
         return dao;
     }
+
+
+    public List<User> findClients(int role_id) {
+        User user = null;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+        Connection con = null;
+        List<User> users = new ArrayList<>();
+        try {
+            con = pool.getConnection();
+            DAO.UserMapper mapper = new DAO.UserMapper();
+            pstmt = con.prepareStatement(SQL_FIND_ALL_USERS_BY_ID );
+            pstmt.setInt(1, role_id);
+            resultSet = pstmt.executeQuery();
+            while (resultSet.next()){
+                user = mapper.mapRow(resultSet);
+                users.add(user);
+            }
+            resultSet.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            ex.printStackTrace();
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        return users;
+    }
+
+    public String getUserStatus(int userId) {
+        String userStatus = "";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            pstmt = con.prepareStatement(SQL_GET_USER_STATUS);
+            pstmt.setInt(1, userId);
+            rs = pstmt.executeQuery();
+            if (rs.next())
+                userStatus  = rs.getString("user_status");
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            throw new DataBaseException(DB_ERROR);
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+        if(userStatus.equals(null)){
+            return "";
+        }else{
+            return userStatus;
+        }
+    }
+
+    public void changeUserStatus(int userId, String userStatus) {
+        PreparedStatement preparedStatement = null;
+        Connection con = null;
+        try {
+            con = pool.getConnection();
+            preparedStatement = con.prepareStatement(SQL_BAN_USER_STATUS);
+            preparedStatement.setString(1, userStatus);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            pool.getInstance().rollbackAndClose(con);
+            throw new DataBaseException(DB_ERROR);
+        } finally {
+            pool.getInstance().commitAndClose(con);
+        }
+    }
+
+
+
+
+
 
     public Feedback getMasterRequestFeedback(int masterId,int reqId) {
         Feedback feedback = null;
@@ -768,10 +854,11 @@ public class DAO {
 
 
     public List<RequestSQL> getManagerRequests() {
-        Statement statement = null;
-        ResultSet rs = null;
+        Statement statement;
+        ResultSet rs ;
         Connection con = null;
         List<RequestSQL> requestsSQL = new ArrayList<>();
+        meth();
         try {
             con = pool.getConnection();
             statement = con.createStatement();
@@ -798,6 +885,10 @@ public class DAO {
             pool.getInstance().commitAndClose(con);
         }
         return requestsSQL;
+    }
+
+    public void meth(){
+        throw new DataBaseException("error");
     }
 
     public List<RequestSQL> getManagerRequests(String param) {
@@ -1077,32 +1168,7 @@ public class DAO {
     }
 
 
-    public List<User> findClients(int role_id) {
-        User user = null;
-        PreparedStatement pstmt = null;
-        ResultSet resultSet = null;
-        Connection con = null;
-        List<User> users = new ArrayList<>();
-        try {
-            con = pool.getConnection();
-            DAO.UserMapper mapper = new DAO.UserMapper();
-            pstmt = con.prepareStatement(SQL_FIND_ALL_USERS_BY_ID );
-            pstmt.setInt(1, role_id);
-            resultSet = pstmt.executeQuery();
-            while (resultSet.next()){
-                user = mapper.mapRow(resultSet);
-                users.add(user);
-            }
-            resultSet.close();
-            pstmt.close();
-        } catch (SQLException ex) {
-            pool.getInstance().rollbackAndClose(con);
-            ex.printStackTrace();
-        } finally {
-            pool.getInstance().commitAndClose(con);
-        }
-        return users;
-    }
+
 
     public Balance checkCustomerBalance(User user) {
         int userId = user.getId();
